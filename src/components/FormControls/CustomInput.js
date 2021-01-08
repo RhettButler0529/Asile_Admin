@@ -1,0 +1,41 @@
+import React from "react";
+import { useTheme } from "@material-ui/styles";
+import classNames from "classnames";
+
+// styles
+import useStyles from "./styles";
+
+// components
+import { TextField, FormControl } from "@material-ui/core";
+
+/**
+ * 
+ * @param {
+ * 
+ * title, selectedDate
+ * handleChange
+ * 
+ * } param0 
+ */
+
+export default function CustomInput(props) {
+    var classes = useStyles();
+    var theme = useTheme();
+
+    return (
+        <FormControl className={classes.formControl}>
+            <TextField
+                // error
+                multiline={props.multiline}
+                rows={4}
+                required
+                label={props.title}
+                // defaultValue="Hello World"\
+                type={props.type}
+                value={props.value}
+                // helperText="Incorrect entry."
+                onChange={(e) => props.handleChange(e)}
+            />
+        </FormControl>
+    );
+}
