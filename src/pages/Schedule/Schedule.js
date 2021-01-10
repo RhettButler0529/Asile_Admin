@@ -131,7 +131,7 @@ function SchedulePage(props) {
         customBodyRender: (value, tableMeta, updateValue) => {
           console.log(value)
           return (
-            <a href={value} target="_blank"> {value} </a>
+            <a href={`${SERVER_URL}upload/${value}`} target="_blank"> {value} </a>
           );
         }
       },
@@ -192,8 +192,14 @@ function SchedulePage(props) {
       options: {
         filter: true,
         sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          console.log(value)
+          return (
+            <a href={`${SERVER_URL}signature/${value}`} target="_blank"> {value} </a>
+          );
+        }
       },
-    },
+      },
   ];
 
   /**

@@ -38,7 +38,7 @@ function Login(props) {
 
   //Show notification
   const notify = (message) => toast(message);
-
+  
   //Email Validation
   const validateEmail = (email) => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -55,10 +55,6 @@ function Login(props) {
       notify("Please enter valid email.");
       return
     } 
-    // else if ( passwordValue.length < 6) {
-    //   notify('Password length should be at least 6 characters.')
-    //   return
-    // } 
     else {
       loginUser(
         userDispatch,

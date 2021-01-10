@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Input, IconButton, FormControlLabel, Switch, Divider, Button } from "@material-ui/core";
+import { Grid, Typography, IconButton, FormControlLabel, Switch, Divider, Button } from "@material-ui/core";
 
 // styles
 import "react-toastify/dist/ReactToastify.css";
@@ -42,13 +42,15 @@ function EditClient(props) {
     const [state, setState] = useState({
         id: '',
         entity_name: '',
-        owner_name: '',
+        custom_field: '',
         address: "",
         location: "",
         phone_number: '',
         company_id: '',
         company_entity_name: '',
-        companyIDList: localStorage.getItem('company_id').split(', ')
+        companyIDList: localStorage.getItem('company_id').split(', '),
+        approved: '0',
+        created_by: ''
     })
 
     const update_id = props.match.params.clientview
@@ -78,12 +80,14 @@ function EditClient(props) {
                 setState(() => ({
                     ...state,
                     entity_name: data.client_entity_name,
-                    owner_name: data.client_owner_name,
+                    custom_field: data.custom_field,
                     address: data.address,
                     company_id: data.company_id.toString(),
                     company_entity_name: data.company_entity_name,
                     phone_number: data.phone_number,
-                    location: data.location
+                    location: data.location,
+                    approved: data.approved,
+                    created_by: data.created_by
                 }))
             })
             .catch(error => {
@@ -98,11 +102,13 @@ function EditClient(props) {
             body: JSON.stringify({
                 client_id: client_id,
                 client_entity_name: state.entity_name,
-                client_owner_name: state.owner_name,
+                custom_field: state.custom_field,
                 address: state.address,
                 phone_number: state.phone_number,
                 location: state.location,
-                company_id: state.company_id.toString()
+                company_id: state.company_id.toString(),
+                approved: state.approved,
+                created_by: state.created_by
             })
         };
         console.log("------------------------", requestOptions.body)
@@ -164,6 +170,9 @@ function EditClient(props) {
             setState(prevState => ({
                 ...prevState, [field]: e
             }))
+        } else if (e.target.name == "approved") {
+            console.log('approved====>', e.target.checked)
+            setState({ ...state, [e.target.name]: e.target.checked });
         } else {
             const { name, value } = e.target;
             setState(prevState => ({
@@ -176,8 +185,8 @@ function EditClient(props) {
         if (state.entity_name == null || state.entity_name == "") {
             notify("Please enter company entity name.")
             return
-        } else if (state.owner_name == null || state.owner_name == "") {
-            notify("Please enter company owner name.")
+        } else if (state.custom_field == null || state.custom_field == "") {
+            notify("Please enter company custom field.")
             return
         } else if (state.address == null || state.address == "") {
             notify("Please enter company address.")
@@ -220,7 +229,7 @@ function EditClient(props) {
                                     handleChange={(e) => handleChange(e, 'entity_name')} />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
-                                <CustomInput req={true} title="Owner Name" value={state.owner_name} handleChange={(e) => handleChange(e, 'owner_name')} />
+                                <CustomInput req={true} title="Custom Field" value={state.custom_field} handleChange={(e) => handleChange(e, 'custom_field')} />
                             </Grid>
                         </Grid>
                         <Grid container spacing={1}>
@@ -242,6 +251,17 @@ function EditClient(props) {
                                 <CustomInput req={true} title="Location(For example: -123.1231 -23.3452)" value={state.location} handleChange={(e) => handleChange(e, 'location')} />
                             </Grid>
 
+                        </Grid>
+                        <Grid container spacing={1}>
+                            <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                                <Grid item>
+                                    <Typography variant={'subtitle1'}>Approved</Typography>
+                                </Grid>
+                                <FormControlLabel
+                                    control={<Switch checked={Number(state.approved)} onChange={handleChange} name="approved" />}
+                                    label="Approved"
+                                />
+                            </Grid>
                         </Grid>
                         <Divider />
                         <Grid container spacing={1}>

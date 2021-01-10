@@ -29,6 +29,7 @@ import EditClientPage from "../../pages/ClientView/EditClient";
 import SalesViewPage from "../../pages/SalesView/Sales";
 import EditSalesPage from "../../pages/SalesView/EditSales";
 import AddSalesPage from "../../pages/SalesView/AddSales";
+import ReportViewPage from '../../pages/ReportView/ReportView'
 import Footer from "../Footer/Footer";
 
 function Layout(props) {
@@ -72,6 +73,7 @@ function Layout(props) {
                 <Route exact path="/app/salesview" component={SalesViewPage} />
                 <Route exact path="/app/salesview/:salesview/edit" component={EditSalesPage} />
                 <Route exact path="/app/salesview/add" component={AddSalesPage} />
+                <Route exact path="/app/reportview" component={ReportViewPage} />
                 
                 <Route component={Error} />
               </Switch>

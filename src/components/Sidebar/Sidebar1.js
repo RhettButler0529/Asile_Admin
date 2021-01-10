@@ -13,7 +13,15 @@ import {
   ArrowBack as ArrowBackIcon,
   MenuOpen, LocalAtmOutlined, ShoppingCartOutlined,
   AccountBalanceOutlined, AssessmentOutlined,
-  FormatAlignJustifyOutlined, FormatAlignLeftOutlined, People, Settings, AccountCircleOutlined, BusinessOutlined, PeopleAltOutlined, TransferWithinAStationOutlined, TimerOutlined
+  FormatAlignJustifyOutlined, 
+  FormatAlignLeftOutlined, 
+  People, 
+  Settings, 
+  AccountCircleOutlined, 
+  BusinessOutlined, 
+  PeopleAltOutlined, 
+  TransferWithinAStationOutlined, 
+  TimerOutlined
 } from "@material-ui/icons";
 import { useTheme } from "@material-ui/styles";
 import { withRouter } from "react-router-dom";
@@ -62,6 +70,12 @@ const structure = [
     label: "Sales Client",
     link: "/app/salesview",
     icon: <TransferWithinAStationOutlined fontSize="small"/>,
+  },
+  {
+    id: 4,
+    label: "Report",
+    link: "/app/reportview",
+    icon: <AssessmentOutlined fontSize="small"/>,
   },
 ];
 

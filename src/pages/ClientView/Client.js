@@ -15,6 +15,7 @@ import { useSelector, connect } from "react-redux";
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import fetchClientView from "../../services/clientview/ClientViewService";
 import { toast, ToastContainer } from "react-toastify";
+import Status from "../../components/Status/Status";
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from '../../common/config';
 
@@ -70,8 +71,8 @@ function ClientViewPage(props) {
       }
     },
     {
-      name: "client_owner_name",
-      label: "Owner Name",
+      name: "custom_field",
+      label: "Custom Field",
       options: {
         filter: true,
         sort: true,
@@ -80,6 +81,27 @@ function ClientViewPage(props) {
     {
       name: "address",
       label: "Address",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: "approved",
+      label: "Approved",
+      options: {
+        filter: false,
+        sort: false,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return (
+            <Status status={value == 1 ? "yes" : "no"} />
+          );
+        }
+      }
+    },
+    {
+      name: "full_name",
+      label: "Created by",
       options: {
         filter: true,
         sort: true,
@@ -124,7 +146,7 @@ function ClientViewPage(props) {
       },
     },
   ];
-  
+
   const actionEdit = (e, i) => {
     history.push("/app/clientview/" + i + "/edit");
   }

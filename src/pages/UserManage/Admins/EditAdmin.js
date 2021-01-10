@@ -182,7 +182,7 @@ function EditAdmin(props) {
 
   const companies = objArray2Array(companyData.company)
 
-  
+
 
   const setCompanyIdfromCompanyName = (company_entity_name) => {
     let object = companyData.company.filter(item => item.company_entity_name == company_entity_name)
@@ -258,25 +258,7 @@ function EditAdmin(props) {
       return
     } else {
       updateAdminInfo(update_id)
-      history.push("/app/usermanage/admin");
-    }
-  }
-
-  const onSaveandNew = () => {
-    if (state.full_name == null || state.full_name == "") {
-      notify("Please enter name.")
-      return
-    } else if (state.email.length < 3 || validateEmail(state.email) == false) {
-      notify("Please enter valid email.");
-      return
-    } else if (state.phone_number.length == 0 || state.phone_number.length < 7) {
-      notify('Please enter valid phone number')
-      return
-    } else if (state.companyIDList == []) {
-      notify("Please enter company name.")
-      return
-    } else {
-      updateAdminInfo(update_id)
+      // history.push("/app/usermanage/admin");
     }
   }
 
@@ -298,22 +280,6 @@ function EditAdmin(props) {
         />
         <Grid item xs={12} md={12}>
           <Widget title="" disableWidgetMenu>
-            <Grid container spacing={1}>
-              <Grid item xs={8} md={8} lg={8}></Grid>
-              <Grid item xs={4} md={4} lg={4}>
-                <Grid container spacing={2} className={classes.buttonContainer}>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    className={classes.button}
-                    startIcon={<Icons.Cancel />}
-                    onClick={() => onCancel()}
-                  >
-                    Cancel
-                                        </Button>
-                </Grid>
-              </Grid>
-            </Grid>
             <Grid container spacing={1}>
               <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
                 <CustomInput req={true} title="Full Name" value={state.full_name}
@@ -372,12 +338,12 @@ function EditAdmin(props) {
                   <Grid item>
                     <Button
                       variant="contained"
-                      color="primary"
+                      color="secondary"
                       className={classes.button}
-                      startIcon={<Icons.Save />}
-                      onClick={() => onSaveandNew()}
+                      startIcon={<Icons.Cancel />}
+                      onClick={() => onCancel()}
                     >
-                      Save & New
+                      Cancel
                                         </Button>
                   </Grid>
                   <Grid item>
@@ -388,7 +354,7 @@ function EditAdmin(props) {
                       startIcon={<Icons.Save />}
                       onClick={() => onSaveandBack()}
                     >
-                      Save & Back
+                      Save
                                         </Button>
                   </Grid>
 

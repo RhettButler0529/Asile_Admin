@@ -112,7 +112,7 @@ function ScheduleViewPage(props) {
         customBodyRender: (value, tableMeta, updateValue) => {
           console.log(value)
           return (
-            <a href={value} target="_blank"> {value} </a>
+            <a href={`${SERVER_URL}upload/${value}`} target="_blank"> {value} </a>
           );
         }
       },
@@ -162,7 +162,7 @@ function ScheduleViewPage(props) {
         sort: false,
         customBodyRender: (value, tableMeta, updateValue) => {
           return (
-            <Status status={value != "0000-00-00 00:00:00"? "yes" : "no"} />
+            <Status status={value != "0000-00-00 00:00:00" ? "yes" : "no"} />
           );
         }
       },
@@ -173,6 +173,12 @@ function ScheduleViewPage(props) {
       options: {
         filter: true,
         sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          console.log(value)
+          return (
+            <a href={`${SERVER_URL}signature/${value}`} target="_blank"> {value} </a>
+          );
+        }
       },
     },
 
