@@ -145,7 +145,9 @@ function AddClient(props) {
                     address: state.address,
                     phone_number: state.phone_number,
                     location: state.location,
-                    company_id: state.company_id
+                    company_id: state.company_id,
+                    approved: 1,
+                    created_by: localStorage.getItem('user_id')
                 })
             };
             fetch(`${SERVER_URL}addClient`, requestOptions)

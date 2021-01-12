@@ -175,6 +175,10 @@ function SalesViewPage(props) {
 
   const importCSV = (data) => {
     console.log(data)
+    addWithCSV(data)
+  }
+
+  const addWithCSV = (data) => {
     for (let i = 1; i < data.length - 1; i++) {
       const row = data[i];
       let saveData = {
@@ -207,10 +211,7 @@ function SalesViewPage(props) {
           console.error('There was an error!', error);
         });
     }
-
   }
-
-
 
   return (
     <>

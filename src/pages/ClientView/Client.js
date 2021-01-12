@@ -209,6 +209,11 @@ function ClientViewPage(props) {
 
   const importCSV = (data) => {
     console.log(data)
+
+
+  }
+
+  const addWithCSV = (data) => {
     for (let i = 1; i < data.length - 1; i++) {
       const row = data[i];
       let saveData = {
@@ -247,7 +252,6 @@ function ClientViewPage(props) {
           console.error('There was an error!', error);
         });
     }
-
   }
 
   return (

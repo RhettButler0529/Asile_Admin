@@ -61,8 +61,8 @@ export default class UploadFiles extends Component {
                 });
             })
                 .then((response) => {
-                    console.log('pop=>', response.data.fileName.split('\\').pop().toString())
-                    fileNameList.push(response.data.fileName.split('\\').pop().toString())
+                    console.log('pop=>', response.data.fileName.split('/').pop().toString())
+                    fileNameList.push(response.data.fileName.split('/').pop().toString())
                     this.setState({
                         message: response.data.message,
                         isError: false
