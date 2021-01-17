@@ -131,8 +131,8 @@ function CompanysPage(props) {
       name: "notes",
       label: "Notes",
       options: {
-        filter: false,
-        sort: false,
+        filter: true,
+        sort: true,
         customBodyRender: (value, tableMeta, updateValue) => {
           return (
             <Status status={value ? "yes" : "no"} />
@@ -144,8 +144,8 @@ function CompanysPage(props) {
       name: "upload",
       label: "Upload",
       options: {
-        filter: false,
-        sort: false,
+        filter: true,
+        sort: true,
         customBodyRender: (value, tableMeta, updateValue) => {
           return (
             <Status status={value ? "yes" : "no"} />

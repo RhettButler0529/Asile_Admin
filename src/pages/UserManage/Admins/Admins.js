@@ -118,8 +118,8 @@ function AdminPage(props) {
       name: "isActive",
       label: "Active",
       options: {
-        filter: false,
-        sort: false,
+        filter: true,
+        sort: true,
         customBodyRender: (value, tableMeta, updateValue) => {
           return (
             <Status status={value ? "yes" : "no"} />

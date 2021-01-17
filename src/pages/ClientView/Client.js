@@ -90,8 +90,8 @@ function ClientViewPage(props) {
       name: "approved",
       label: "Approved",
       options: {
-        filter: false,
-        sort: false,
+        filter: true,
+        sort: true,
         customBodyRender: (value, tableMeta, updateValue) => {
           return (
             <Status status={value == 1 ? "yes" : "no"} />
@@ -111,8 +111,8 @@ function ClientViewPage(props) {
       name: "location",
       label: "Location",
       options: {
-        filter: false,
-        sort: false,
+        filter: true,
+        sort: true,
       },
     },
     {

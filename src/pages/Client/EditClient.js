@@ -185,7 +185,7 @@ function EditClient(props) {
             notify("Please enter client entity name.")
             return
         } else if (state.custom_field == null || state.custom_field == "") {
-            notify("Please enter client owner name.")
+            notify("Please enter custom field.")
             return
         } else if (state.address == null || state.address == "") {
             notify("Please enter client address.")
@@ -228,7 +228,7 @@ function EditClient(props) {
                                     handleChange={(e) => handleChange(e, 'entity_name')} />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
-                                <CustomInput req={true} title="Owner Name" value={state.custom_field} handleChange={(e) => handleChange(e, 'custom_field')} />
+                                <CustomInput req={true} title="Custom Field(For example: Gender: Male, Age: 28)" value={state.custom_field} handleChange={(e) => handleChange(e, 'custom_field')} />
                             </Grid>
                         </Grid>
                         <Grid container spacing={1}>

@@ -1,6 +1,5 @@
 import React from "react";
 import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
-
 // components
 import Layout from "./Layout/Layout";
 import Layout1 from "./Layout/Layout1";
@@ -21,10 +20,8 @@ export default function App() {
   return (
     <HashRouter>
       <Switch>
-        {/* if (isAuthenticated == 1) {
-          <Route exact path="/" render={() => <Redirect to="/app" />} />
-        } else if (isAuthenticated == 2) {
-          <Route exact path="/" render={() => <Redirect to="/app1" />} />
+        {/* {
+          isAuthenticated == 0 && <Redirect to="/login" />
         } */}
 
         <Route exact path="/" render={() => <Redirect to="/app" />} />

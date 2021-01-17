@@ -70,11 +70,10 @@ function loginUser(dispatch, login, password, history, setIsLoading, setError) {
 
   // auth api
   loginApi({ email: login, password: password }).then(res => {
-    if (res.data.user_id == null || res.data.user_id == undefined) {
+    if (res.data.user_id == 0 || res.data.user_id == undefined) {
       dispatch({ type: "LOGIN_FAILURE" });
       history.push('/login');
-    }
-    setTimeout(() => {
+    } else {
       let check_id = res.data.isSuperAdmin;
       if (check_id == 1) {
         localStorage.setItem('id_token', 1)
@@ -98,14 +97,12 @@ function loginUser(dispatch, login, password, history, setIsLoading, setError) {
       } else {
         history.push('/login');
       }
-    }, 1000);
+    }
   }).catch(err => {
-    setTimeout(() => {
       dispatch({ type: "LOGIN_FAILURE" });
       history.push('/login')
       setError(err);
       setIsLoading(false);
-    }, 3000);
   })
 
 }

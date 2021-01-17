@@ -164,8 +164,8 @@ function SchedulePage(props) {
       name: "isLate",
       label: "Late",
       options: {
-        filter: false,
-        sort: false,
+        filter: true,
+        sort: true,
         customBodyRender: (value, tableMeta, updateValue) => {
           return (
             <Status status={value ? "yes" : "no"} />
@@ -177,8 +177,8 @@ function SchedulePage(props) {
       name: "check_in_datetime",
       label: "Present/Absent",
       options: {
-        filter: false,
-        sort: false,
+        filter: true,
+        sort: true,
         customBodyRender: (value, tableMeta, updateValue) => {
           return (
             <Status status={value != "0000-00-00 00:00:00"? "yes" : "no"} />
