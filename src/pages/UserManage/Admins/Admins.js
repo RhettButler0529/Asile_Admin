@@ -16,21 +16,17 @@ import { bindActionCreators } from "redux";
 import fetchAdmins from "../../../services/admins/AdminService";
 import { useUserState } from "../../../context/UserContext";
 import { Edit } from "@material-ui/icons";
-import { toast, ToastContainer } from "react-toastify";
+import { toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from '../../../common/config';
 
 function AdminPage(props) {
-  var classes = useStyles();
   let history = useHistory();
-  const [anchorEl, setAnchorEl] = useState(null);   // Table action menu
-  const [selectedRowIndex, setSelectedRowIndex] = useState(0);
   const [dataSource, setDataSource] = useState([]);
   const adminData = useSelector(state => state.admin);
 
   //loading image
   const [open, setOpen] = useState(false);
-  let admin = useUserState();
 
   useEffect(() => {
     props.fetchAdmins();// call backend

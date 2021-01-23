@@ -30,6 +30,19 @@ import SalesViewPage from "../../pages/SalesView/Sales";
 import EditSalesPage from "../../pages/SalesView/EditSales";
 import AddSalesPage from "../../pages/SalesView/AddSales";
 import ReportViewPage from '../../pages/ReportView/ReportView'
+import ReviewPage from '../../pages/SalesOrder/Review'
+import HistoryPage from '../../pages/SalesOrder/History'
+import ItemPage from '../../pages/SalesOrder/Item/Item'
+import AddItemPage from '../../pages/SalesOrder/Item/AddItem'
+import EditItemPage from '../../pages/SalesOrder/Item/EditItem'
+import DiscountPage from '../../pages/SalesOrder/Discount/Discount'
+import AddDiscountPage from '../../pages/SalesOrder/Discount/AddDiscount'
+import EditDiscountPage from '../../pages/SalesOrder/Discount/EditDiscount'
+import PromotionPage from '../../pages/SalesOrder/Promotion/Promotion'
+import AddPromotionPage from '../../pages/SalesOrder/Promotion/AddPromotion'
+import EditPromotionPage from '../../pages/SalesOrder/Promotion/EditPromotion'
+import TargetPage from '../../pages/SalesOrder/Target/Target'
+// import EditItemPage from '../../pages/SalesOrder/Item/EditItem'
 import Footer from "../Footer/Footer";
 
 function Layout(props) {
@@ -74,7 +87,19 @@ function Layout(props) {
                 <Route exact path="/app/salesview/:salesview/edit" component={EditSalesPage} />
                 <Route exact path="/app/salesview/add" component={AddSalesPage} />
                 <Route exact path="/app/reportview" component={ReportViewPage} />
-                
+                <Route exact path="/app/salesorder/review" component={ReviewPage} />
+                <Route exact path="/app/salesorder/history" component={HistoryPage} />
+                <Route exact path="/app/salesorder/item" component={ItemPage} />
+                <Route exact path="/app/salesorder/item/add" component={AddItemPage} />
+                <Route exact path="/app/salesorder/item/:item/edit" component={EditItemPage} />
+                <Route exact path="/app/salesorder/discount" component={DiscountPage} />
+                <Route exact path="/app/salesorder/discount/add" component={AddDiscountPage} />
+                <Route exact path="/app/salesorder/discount/:discount/edit" component={EditDiscountPage} />
+                <Route exact path="/app/salesorder/promotion" component={PromotionPage} />
+                <Route exact path="/app/salesorder/promotion/add" component={AddPromotionPage} />
+                <Route exact path="/app/salesorder/promotion/:promotion/edit" component={EditPromotionPage} />
+                <Route exact path="/app/salesorder/target" component={TargetPage} />
+                {/* <Route exact path="/app/salesorder/item/:salesorder_item/edit" component={EditItemPage} /> */}
                 <Route component={Error} />
               </Switch>
             </Grid>

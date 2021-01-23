@@ -10,7 +10,7 @@ import Success from "../pages/success/success"
 import Login from "../pages/login";
 
 // context
-import { useUserState, UserProvider } from "../context/UserContext";
+import { useUserState } from "../context/UserContext";
 
 export default function App() {
   // global

@@ -150,13 +150,7 @@ function EditAdmin(props) {
           return Promise.reject(error);
         }
         handleNotificationCall("shipped");
-        setState(state => ({
-          ...state,
-          full_name: '',
-          email: "",
-          phone_number: '',
-          companyIDList: [],
-        }))
+        
       })
       .catch(error => {
         handleNotificationCall("error");

@@ -16,5 +16,9 @@ export default makeStyles((theme) => ({
   },
   paid: {
     backgroundColor: theme.palette.success.main
-  }
+  },
+  pending: {
+    backgroundColor: theme.palette.secondary.main
+  },
+
 }));

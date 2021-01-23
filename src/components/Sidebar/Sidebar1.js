@@ -11,21 +11,22 @@ import {
   LibraryBooks as LibraryIcon,
   HelpOutline as FAQIcon,
   ArrowBack as ArrowBackIcon,
-  MenuOpen, LocalAtmOutlined, ShoppingCartOutlined,
-  AccountBalanceOutlined, AssessmentOutlined,
-  FormatAlignJustifyOutlined, 
-  FormatAlignLeftOutlined, 
-  People, 
-  Settings, 
+  AssessmentOutlined,
   AccountCircleOutlined, 
-  BusinessOutlined, 
   PeopleAltOutlined, 
   TransferWithinAStationOutlined, 
-  TimerOutlined
+  TimerOutlined,
 } from "@material-ui/icons";
 import { useTheme } from "@material-ui/styles";
 import { withRouter } from "react-router-dom";
 import classNames from "classnames";
+import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import HistoryOutlinedIcon from '@material-ui/icons/HistoryOutlined';
+import StorageOutlinedIcon from '@material-ui/icons/StorageOutlined';
+import TrendingDownOutlinedIcon from '@material-ui/icons/TrendingDownOutlined';
+import SpellcheckOutlinedIcon from '@material-ui/icons/SpellcheckOutlined';
+import MergeTypeOutlinedIcon from '@material-ui/icons/MergeTypeOutlined';
 
 // styles
 import useStyles from "./styles";
@@ -73,9 +74,58 @@ const structure = [
   },
   {
     id: 4,
+    label: "Sales Order",
+    link: "/app/salesorder/review",
+    icon: <ShoppingCartOutlinedIcon fontSize="small" />,
+    children: [
+      { 
+        label: "Review Orders", 
+        link: "/app/salesorder/review",
+        icon: <VisibilityOutlinedIcon fontSize="small" />, 
+      },
+      { 
+        label: "Orders History", 
+        link: "/app/salesorder/history",
+        icon: <HistoryOutlinedIcon fontSize="small" />,  
+      },
+      { 
+        label: "Items Database", 
+        link: "/app/salesorder/item",
+        icon: <StorageOutlinedIcon fontSize="small" />,   
+      },
+      { 
+        label: "Discount", 
+        link: "/app/salesorder/discount",
+        icon: <TrendingDownOutlinedIcon fontSize="small" />,   
+      },
+      { 
+        label: "Promotions", 
+        link: "/app/salesorder/promotion",
+        icon: <SpellcheckOutlinedIcon fontSize="small" />,   
+      },
+      { 
+        label: "Sales Target", 
+        link: "/app/salesorder/target",
+        icon: <MergeTypeOutlinedIcon fontSize="small" />,   
+      },    
+    ],
+  },
+  {
+    id: 5,
     label: "Report",
     link: "/app/reportview",
     icon: <AssessmentOutlined fontSize="small"/>,
+    children: [
+      { 
+        label: "Schedules Report", 
+        link: "/app/reportview",
+        icon: <VisibilityOutlinedIcon fontSize="small" />, 
+      },
+      { 
+        label: "Orders Report", 
+        link: "/app/salesorder/history",
+        icon: <HistoryOutlinedIcon fontSize="small" />,  
+      }]
   },
 ];
 

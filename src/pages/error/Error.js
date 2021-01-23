@@ -6,9 +6,6 @@ import classnames from "classnames";
 // styles
 import useStyles from "./styles";
 
-// logo
-import logo from "../../assets/images/logo.png";
-
 export default function Error() {
   var classes = useStyles();
 

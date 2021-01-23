@@ -71,6 +71,21 @@ export default function PageTitle(props) {
           props.history.push("/app/clientview/add");
         }
         break;
+      case 'salesorder_item':
+        if (item === 'Add New') {
+          props.history.push("/app/salesorder/item/add");
+        }
+        break;
+      case 'salesorder_discount':
+        if (item === 'Add New') {
+          props.history.push("/app/salesorder/discount/add");
+        }
+        break;
+      case 'salesorder_promotion':
+        if (item === 'Add New') {
+          props.history.push("/app/salesorder/promotion/add");
+        }
+        break;
       default:
         console.log();
     }

@@ -102,9 +102,7 @@ export default class UploadFiles extends Component {
             selectedFiles,
             currentFile,
             progress,
-            message,
             fileInfos,
-            isError
         } = this.state;
         return (
             <div className="mg20">
