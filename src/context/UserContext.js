@@ -70,6 +70,7 @@ function loginUser(dispatch, login, password, history, setIsLoading, setError) {
 
   // auth api
   loginApi({ email: login, password: password }).then(res => {
+    console.log("Login=====> ", res)
     if (res.data.user_id == 0 || res.data.user_id == undefined) {
       dispatch({ type: "LOGIN_FAILURE" });
       history.push('/login');
@@ -78,6 +79,7 @@ function loginUser(dispatch, login, password, history, setIsLoading, setError) {
       if (check_id == 1) {
         localStorage.setItem('id_token', 1)
         localStorage.setItem('user_id', res.data.user_id)
+        localStorage.setItem('full_name', res.data.full_name)
         adminID = 1
         setError(true)
         setIsLoading(false)
@@ -88,6 +90,8 @@ function loginUser(dispatch, login, password, history, setIsLoading, setError) {
         localStorage.setItem('id_token', 2)
         localStorage.setItem('company_id', res.data.company_id)
         localStorage.setItem('user_id', res.data.user_id)
+        localStorage.setItem('full_name', res.data.full_name)
+        localStorage.setItem('allow_so', res.data.allow_so)
         adminID = 2
         setError(null)
         setIsLoading(false)

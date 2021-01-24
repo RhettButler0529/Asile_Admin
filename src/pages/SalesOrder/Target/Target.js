@@ -19,17 +19,31 @@ import ItemTarget from './ItemTarget'
 function TargetPage(props) {
   let history = useHistory();
   const [activate, setActivate] = useState(true)
-  const [company, setCompany] = useState('All')
+  const [company, setCompany] = useState('Default')
+  const [item, setItem] = useState('Default')
   const companyList = [
-    'All',
+    'Default',
     'CompanyA',
     'CompanyB',
     'CompanyC'
   ]
 
+  const itemList = [
+    'Default',
+    'ItemA',
+    'ItemB',
+    'ItemC'
+  ]
+
   const handleCompanyChange = (e, field) => {
     if (field == 'company') {
       setCompany(e)
+    }
+  }
+
+  const handleItemChange = (e, field) => {
+    if (field == 'item') {
+      setItem(e)
     }
   }
 
@@ -94,10 +108,16 @@ function TargetPage(props) {
             md={3}
             sm={3}
             xs={12}>
-            <CustomCombobox req={true} name="Company"
-              items={companyList} value={company}
-              handleChange={(e) => handleCompanyChange(e, 'company')}
-            />
+            {
+              activate ? <CustomCombobox req={true} name="Company"
+                items={companyList} value={company}
+                handleChange={(e) => handleCompanyChange(e, 'company')}
+              /> : <CustomCombobox req={true} name="Item"
+                items={itemList} value={item}
+                handleChange={(e) => handleItemChange(e, 'item')}
+                />
+            }
+
           </Grid>
           <Grid item
             lg={6}
@@ -116,7 +136,7 @@ function TargetPage(props) {
               size="large"
               color="primary"
               style={{ marginTop: 10, marginLeft: 10 }}
-              // startIcon={iconVar[item]}
+            // startIcon={iconVar[item]}
             >
               Setting
               </Button>
@@ -125,7 +145,7 @@ function TargetPage(props) {
         </Grid>
       </div>
       {
-        company == "All" ? <Grid container spacing={8}>
+        (company == "Default" && item == 'Default') ? <Grid container spacing={8}>
           <Grid item lg={6} md={6} sm={6} xs={12}>
             <TotalWidget title="Sales Target" />
           </Grid>
@@ -135,10 +155,10 @@ function TargetPage(props) {
         </Grid> : null
       }
       {
-        activate ?<CompanyTarget/>: <ItemTarget/>
+        activate ? <CompanyTarget /> : <ItemTarget />
       }
-      
-      
+
+
 
     </>
   );

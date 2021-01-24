@@ -12,9 +12,9 @@ import {
   HelpOutline as FAQIcon,
   ArrowBack as ArrowBackIcon,
   AssessmentOutlined,
-  AccountCircleOutlined, 
-  PeopleAltOutlined, 
-  TransferWithinAStationOutlined, 
+  AccountCircleOutlined,
+  PeopleAltOutlined,
+  TransferWithinAStationOutlined,
   TimerOutlined,
 } from "@material-ui/icons";
 import { useTheme } from "@material-ui/styles";
@@ -52,81 +52,78 @@ const structure = [
     id: 0,
     label: "User",
     link: "/app/userview",
-    icon: <AccountCircleOutlined fontSize="small"/>,
+    icon: <AccountCircleOutlined fontSize="small" />,
   },
   {
     id: 1,
     label: "Client",
     link: "/app/clientview",
-    icon: <PeopleAltOutlined fontSize="small"/>,
+    icon: <PeopleAltOutlined fontSize="small" />,
   },
   {
     id: 2,
     label: "Schedule",
     link: "/app/scheduleview",
-    icon: <TimerOutlined fontSize="small"/>,
+    icon: <TimerOutlined fontSize="small" />,
   },
   {
     id: 3,
     label: "Sales Client",
     link: "/app/salesview",
-    icon: <TransferWithinAStationOutlined fontSize="small"/>,
+    icon: <TransferWithinAStationOutlined fontSize="small" />,
   },
   {
     id: 4,
-    label: "Sales Order",
-    link: "/app/salesorder/review",
-    icon: <ShoppingCartOutlinedIcon fontSize="small" />,
-    children: [
-      { 
-        label: "Review Orders", 
-        link: "/app/salesorder/review",
-        icon: <VisibilityOutlinedIcon fontSize="small" />, 
-      },
-      { 
-        label: "Orders History", 
-        link: "/app/salesorder/history",
-        icon: <HistoryOutlinedIcon fontSize="small" />,  
-      },
-      { 
-        label: "Items Database", 
-        link: "/app/salesorder/item",
-        icon: <StorageOutlinedIcon fontSize="small" />,   
-      },
-      { 
-        label: "Discount", 
-        link: "/app/salesorder/discount",
-        icon: <TrendingDownOutlinedIcon fontSize="small" />,   
-      },
-      { 
-        label: "Promotions", 
-        link: "/app/salesorder/promotion",
-        icon: <SpellcheckOutlinedIcon fontSize="small" />,   
-      },
-      { 
-        label: "Sales Target", 
-        link: "/app/salesorder/target",
-        icon: <MergeTypeOutlinedIcon fontSize="small" />,   
-      },    
-    ],
-  },
-  {
-    id: 5,
     label: "Report",
-    link: "/app/reportview",
-    icon: <AssessmentOutlined fontSize="small"/>,
+    link: "/app/schedule_report",
+    icon: <AssessmentOutlined fontSize="small" />,
     children: [
-      { 
-        label: "Schedules Report", 
-        link: "/app/reportview",
-        icon: <VisibilityOutlinedIcon fontSize="small" />, 
+      {
+        label: "Schedules Report",
+        link: "/app/schedule_report",
+        icon: <VisibilityOutlinedIcon fontSize="small" />,
       },
-      { 
-        label: "Orders Report", 
-        link: "/app/salesorder/history",
-        icon: <HistoryOutlinedIcon fontSize="small" />,  
+      {
+        label: "Orders Report",
+        link: "/app/salesorder_report",
+        icon: <HistoryOutlinedIcon fontSize="small" />,
       }]
   },
+  localStorage.getItem('allow_so') != 0 ?
+    {
+      id: 5,
+      label: "Sales Order",
+      link: "/app/salesorder/review",
+      icon: <ShoppingCartOutlinedIcon fontSize="small" />,
+      children: [
+        {
+          label: "Review Orders",
+          link: "/app/salesorder/review",
+          icon: <VisibilityOutlinedIcon fontSize="small" />,
+        },
+        {
+          label: "Orders History",
+          link: "/app/salesorder/history",
+          icon: <HistoryOutlinedIcon fontSize="small" />,
+        },
+        {
+          label: "Items Database",
+          link: "/app/salesorder/item",
+          icon: <StorageOutlinedIcon fontSize="small" />,
+        },
+        {
+          label: "Discount",
+          link: "/app/salesorder/discount",
+          icon: <TrendingDownOutlinedIcon fontSize="small" />,
+        },
+        {
+          label: "Promotions",
+          link: "/app/salesorder/promotion",
+          icon: <SpellcheckOutlinedIcon fontSize="small" />,
+        },
+      ],
+    } : 5,
+  
 ];
 
 function Sidebar({ location }) {
@@ -167,12 +164,12 @@ function Sidebar({ location }) {
       }}
       open={isSidebarOpened}
     >
-      
-      
+
+
       <div className={classes.mobileBackButton}>
         <IconButton onClick={() => toggleSidebar(layoutDispatch)}>
           <ArrowBackIcon
-            style={{color:'white'}}
+            style={{ color: 'white' }}
             classes={{
               root: classNames(classes.headerIcon, classes.headerIconCollapse),
             }}
@@ -189,14 +186,14 @@ function Sidebar({ location }) {
           />
         ))}
       </List>
-      <div style={{justifyContent: 'center', alignSelf: 'center', marginTop: 50 }}>
-        <IconButton  style={{color:'white', fontSize: 14, fontWeight: 'bold'}}
-            onClick={() => {
-          localStorage.clear();
-          window.location.reload();
-        }}>
+      <div style={{ justifyContent: 'center', alignSelf: 'center', position: 'absolute', bottom: 10 }}>
+        <IconButton style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}
+          onClick={() => {
+            localStorage.clear();
+            window.location.reload();
+          }}>
           <ArrowBackIcon
-           style={{marginRight: 5}}
+            style={{ marginRight: 5 }}
           />
           Log Out
         </IconButton>

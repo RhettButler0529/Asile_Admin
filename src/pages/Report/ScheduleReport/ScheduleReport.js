@@ -7,18 +7,18 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import useStyles from "./styles";
 
 // components
-import PageTitle from "../../components/PageTitle/PageTitle";
+import PageTitle from "../../../components/PageTitle/PageTitle";
 import { useHistory } from "react-router-dom";
 import { useSelector, connect } from "react-redux";
-import BackdropLoading from "../../components/Loading/BackdropLoading";
+import BackdropLoading from "../../../components/Loading/BackdropLoading";
 import { bindActionCreators } from "redux";
-import fetchUserView from "../../services/users/UserViewService";
-import { useUserState } from "../../context/UserContext";
+import fetchUserView from "../../../services/users/UserViewService";
+import { useUserState } from "../../../context/UserContext";
 import moment from 'moment'
-import { SERVER_URL } from '../../common/config';
-import CustomDatePicker from "../../components/FormControls/CustomDatePicker";
+import { SERVER_URL } from '../../../common/config';
+import CustomDatePicker from "../../../components/FormControls/CustomDatePicker";
 
-function ReportViewPage(props) {
+function ScheduleReportPage(props) {
   var classes = useStyles();
   let history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);   // Table action menu
@@ -214,7 +214,7 @@ function ReportViewPage(props) {
   return (
     <>
 
-      <PageTitle title="Report" data={dataSource} />
+      <PageTitle title="Schedules Report" data={dataSource} />
       <Grid container spacing={1}>
         <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
           <CustomDatePicker title="Start Date" selectedDate={state.start_date} handleChange={(e) => handleDateChange(e, 'start_date')} />
@@ -227,7 +227,7 @@ function ReportViewPage(props) {
         <Grid item xs={12} md={12}>
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
-              title={"Report"}
+              title={"Schedules Report"}
               data={report}
               columns={columns}
               options={options}
@@ -251,4 +251,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ReportViewPage);
+)(ScheduleReportPage);

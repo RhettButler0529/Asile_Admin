@@ -135,7 +135,7 @@ function Sidebar({ location }) {
           />
         ))}
       </List>
-      <div className={classes.sidebarList} style={{ justifyContent: 'center', alignSelf: 'center',}}>
+      <div className={classes.sidebarList} style={{ justifyContent: 'center', alignSelf: 'center', position: 'absolute', bottom: 10}}>
         <IconButton style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}
           onClick={() => {
             localStorage.clear();

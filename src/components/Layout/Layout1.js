@@ -29,7 +29,8 @@ import EditClientPage from "../../pages/ClientView/EditClient";
 import SalesViewPage from "../../pages/SalesView/Sales";
 import EditSalesPage from "../../pages/SalesView/EditSales";
 import AddSalesPage from "../../pages/SalesView/AddSales";
-import ReportViewPage from '../../pages/ReportView/ReportView'
+import ScheduleReportPage from '../../pages/Report/ScheduleReport/ScheduleReport'
+import SalesOrderReportPage from '../../pages/Report/SalesOrderReport/SalesOrderReport'
 import ReviewPage from '../../pages/SalesOrder/Review'
 import HistoryPage from '../../pages/SalesOrder/History'
 import ItemPage from '../../pages/SalesOrder/Item/Item'
@@ -86,7 +87,8 @@ function Layout(props) {
                 <Route exact path="/app/salesview" component={SalesViewPage} />
                 <Route exact path="/app/salesview/:salesview/edit" component={EditSalesPage} />
                 <Route exact path="/app/salesview/add" component={AddSalesPage} />
-                <Route exact path="/app/reportview" component={ReportViewPage} />
+                <Route exact path="/app/schedule_report" component={ScheduleReportPage} />
+                <Route exact path="/app/salesorder_report" component={TargetPage} />
                 <Route exact path="/app/salesorder/review" component={ReviewPage} />
                 <Route exact path="/app/salesorder/history" component={HistoryPage} />
                 <Route exact path="/app/salesorder/item" component={ItemPage} />
@@ -98,7 +100,6 @@ function Layout(props) {
                 <Route exact path="/app/salesorder/promotion" component={PromotionPage} />
                 <Route exact path="/app/salesorder/promotion/add" component={AddPromotionPage} />
                 <Route exact path="/app/salesorder/promotion/:promotion/edit" component={EditPromotionPage} />
-                <Route exact path="/app/salesorder/target" component={TargetPage} />
                 {/* <Route exact path="/app/salesorder/item/:salesorder_item/edit" component={EditItemPage} /> */}
                 <Route component={Error} />
               </Switch>

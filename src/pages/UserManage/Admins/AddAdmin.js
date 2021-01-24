@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Input, IconButton, Divider, Button } from "@material-ui/core";
+import { Grid, Input, FormControlLabel, Switch, Divider, Button } from "@material-ui/core";
 
 // styles
 import "react-toastify/dist/ReactToastify.css";
@@ -13,6 +13,7 @@ import { useSelector, connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CustomInput from "../../../components/FormControls/CustomInput";
 import CustomCombobox from "../../../components/FormControls/CustomCombobox";
+import { Typography } from "../../../components/Wrappers/Wrappers";
 import * as Icons from "@material-ui/icons";
 import Notification from "../../../components/Notification/Notification";
 import fetchCompany from "../../../services/company/CompanyService";
@@ -100,7 +101,9 @@ function AddAdmin(props) {
         email: "",
         phone_number: '',
         companyIDList: [],
-        company_entity_name: ""
+        company_entity_name: "",
+        sales_target: 0,
+        allow_so: false
     })
     const [companyList, setCompanyList] = React.useState([]);
 
@@ -128,11 +131,14 @@ function AddAdmin(props) {
     }
     //input fields event
     const handleChange = (e, field) => {
-
-        const { name, value } = e.target;
-        setState(prevState => ({
-            ...prevState, [field]: value
-        }))
+        if (e.target.name == 'allow_so') {
+            setState({ ...state, [e.target.name]: e.target.checked });
+        } else {
+            const { name, value } = e.target;
+            setState(prevState => ({
+                ...prevState, [field]: value
+            }))
+        }
     }
 
     const onSaveandBack = () => {
@@ -148,6 +154,9 @@ function AddAdmin(props) {
         } else if (state.companyIDList == []) {
             notify("Please enter company name.")
             return
+        } else if (state.sales_target == 0) {
+            notify("Please enter sales target.")
+            return
         } else {
             const requestOptions = {
                 method: 'POST',
@@ -159,7 +168,9 @@ function AddAdmin(props) {
                     phone_number: state.phone_number,
                     company_id: state.companyIDList.join(', '),
                     isAdmin: true,
-                    isActive: false
+                    isActive: true,
+                    sales_target: state.sales_target,
+                    allow_so: state.allow_so
                 })
             };
             fetch(`${SERVER_URL}addUser`, requestOptions)
@@ -213,7 +224,9 @@ function AddAdmin(props) {
                     phone_number: state.phone_number,
                     company_id: state.companyIDList.join(', '),
                     isAdmin: true,
-                    isActive: false
+                    isActive: true,
+                    sales_target: state.sales_target,
+                    allow_so: state.allow_so
                 })
             };
             fetch(`${SERVER_URL}addUser`, requestOptions)
@@ -245,6 +258,8 @@ function AddAdmin(props) {
                 email: "",
                 phone_number: '',
                 companyIDList: [],
+                allow_so: false,
+                sales_target: 0
             }))
         }
 
@@ -330,7 +345,22 @@ function AddAdmin(props) {
                                         ))}
                                     </Select>
                                 </FormControl>
-                            
+
+                            </Grid>
+                        </Grid>
+                        <Grid container spacing={1}>
+                            <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                                <CustomInput title="Sales Target" value={state.sales_target}
+                                    handleChange={(e) => handleChange(e, 'sales_target')} />
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                                <Typography>Allow Sales Order</Typography>
+                                <Grid component="label" container alignItems="center" spacing={0}>
+                                    <FormControlLabel
+                                        control={<Switch checked={state.allow_so} onChange={handleChange} name="allow_so" />}
+                                        label="Allow"
+                                    />
+                                </Grid>
                             </Grid>
                         </Grid>
                         <Divider />

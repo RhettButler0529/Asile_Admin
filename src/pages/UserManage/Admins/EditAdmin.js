@@ -79,7 +79,9 @@ function EditAdmin(props) {
     phone_number: '',
     company_id: '',
     company_entity_name: '',
-    isActive: false
+    isActive: false,
+    allow_so: false,
+    sales_target: 0,
   })
 
   const update_id = props.match.params.admin
@@ -117,7 +119,9 @@ function EditAdmin(props) {
           phone_number: data[0].phone_number,
           companyIDList: data[0].company_id.split(', '),
           company_entity_name: data[0].company_entity_name,
-          isActive: data[0].isActive
+          isActive: data[0].isActive,
+          sales_target: data[0].sales_target,
+          allow_so: data[0].allow_so
         }))
       })
       .catch(error => {
@@ -136,7 +140,9 @@ function EditAdmin(props) {
         phone_number: state.phone_number,
         company_id: state.companyIDList.join(', '),
         isAdmin: true,
-        isActive: state.isActive
+        isActive: state.isActive,
+        sales_target: state.sales_target,
+        allow_so: state.allow_so
       })
     };
     fetch(`${SERVER_URL}updateUser`, requestOptions)
@@ -228,6 +234,8 @@ function EditAdmin(props) {
   const handleChange = (e, field) => {
     if (e.target.name == 'isActive') {
       setState({ ...state, [e.target.name]: e.target.checked });
+    } else if (e.target.name == 'allow_so') {
+      setState({ ...state, [e.target.name]: e.target.checked });
     } else {
       const { name, value } = e.target;
       setState(prevState => ({
@@ -249,6 +257,9 @@ function EditAdmin(props) {
       return
     } else if (state.companyIDList == []) {
       notify("Please enter company name.")
+      return
+    } else if (state.sales_target == 0) {
+      notify("Please enter sales_target.")
       return
     } else {
       updateAdminInfo(update_id)
@@ -314,11 +325,27 @@ function EditAdmin(props) {
             </Grid>
             <Grid container spacing={1}>
               <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                <CustomInput req={true} title="Sales Target" value={state.sales_target}
+                  handleChange={(e) => handleChange(e, 'sales_target')} />
+              </Grid>
+              
+            </Grid>
+            <Grid container spacing={1}>
+              <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
                 <Typography>Activate</Typography>
                 <Grid component="label" container alignItems="center" spacing={0}>
                   <FormControlLabel
                     control={<Switch checked={state.isActive} onChange={handleChange} name="isActive" />}
                     label="Active"
+                  />
+                </Grid>
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                <Typography>Allow Sales Order</Typography>
+                <Grid component="label" container alignItems="center" spacing={0}>
+                  <FormControlLabel
+                    control={<Switch checked={state.allow_so} onChange={handleChange} name="allow_so" />}
+                    label="Allow"
                   />
                 </Grid>
               </Grid>

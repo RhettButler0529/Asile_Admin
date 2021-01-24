@@ -102,17 +102,30 @@ function AdminPage(props) {
         sort: true,
       },
     },
-    // {
-    //   name: "company_entity_name",
-    //   label: "Company Name",
-    //   options: {
-    //     filter: true,
-    //     sort: true,
-    //   },
-    // },
+    {
+      name: "sales_target",
+      label: "Sales Target",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
     {
       name: "isActive",
       label: "Active",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return (
+            <Status status={value ? "yes" : "no"} />
+          );
+        }
+      },
+    },
+    {
+      name: "allow_so",
+      label: "Allow Sales Order",
       options: {
         filter: true,
         sort: true,

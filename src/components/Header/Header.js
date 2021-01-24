@@ -34,7 +34,7 @@ export default function Header(props) {
 
   return (
     <Grid container spacing={4}>
-      <Toolbar className={classes.toolbar}>
+      <Toolbar className={classes.toolbar} style={{display: 'flex', justifyContent: 'space-between'}}>
         <IconButton
           color="inherit"
           onClick={() => toggleSidebar(layoutDispatch)}
@@ -63,8 +63,12 @@ export default function Header(props) {
               />
             )}
         </IconButton>
-        <Typography variant="h6" weight="medium" className={classes.logotype}>
+        <Typography variant="h4" weight="medium" className={classes.logotype}>
           ASILE
+          </Typography>
+
+        <Typography variant="h6" weight="medium" className={classes.logotype} style={{ float: 'center', marginLeft: 30 }}>
+          Hi, {localStorage.getItem('full_name')}
         </Typography>
       </Toolbar>
     </Grid>
