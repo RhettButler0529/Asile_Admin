@@ -81,7 +81,10 @@ function TargetPage(props) {
                 color="primary"
                 style={{ margin: 5 }}
                 // startIcon={iconVar[item]}
-                onClick={() => setActivate(true)}
+                onClick={() => {
+                  setActivate(true);
+                  setItem("Default")
+                }}
               >
                 Company
               </Button>
@@ -93,7 +96,10 @@ function TargetPage(props) {
                 color="primary"
                 style={{ margin: 5 }}
                 // startIcon={iconVar[item]}
-                onClick={() => setActivate(false)}
+                onClick={() => {
+                  setActivate(false);
+                  setCompany("Default")
+                }}
               >
                 Item
               </Button>
@@ -136,7 +142,10 @@ function TargetPage(props) {
               size="large"
               color="primary"
               style={{ marginTop: 10, marginLeft: 10 }}
-            // startIcon={iconVar[item]}
+              // startIcon={iconVar[item]}
+              onClick={() => {
+                history.push('/app/salesorder/setting')
+              }}
             >
               Setting
               </Button>
@@ -145,14 +154,14 @@ function TargetPage(props) {
         </Grid>
       </div>
       {
-        (company == "Default" && item == 'Default') ? <Grid container spacing={8}>
+        (company == "Default" && item == 'Default') ? null : <Grid container spacing={8}>
           <Grid item lg={6} md={6} sm={6} xs={12}>
             <TotalWidget title="Sales Target" />
           </Grid>
           <Grid item lg={6} md={6} sm={6} xs={12}>
             <TotalWidget title="Current Total Sales" />
           </Grid>
-        </Grid> : null
+        </Grid>
       }
       {
         activate ? <CompanyTarget /> : <ItemTarget />

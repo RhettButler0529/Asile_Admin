@@ -17,7 +17,10 @@ import * as Icons from "@material-ui/icons";
 import { toast, ToastContainer } from "react-toastify";
 import Notification from "../../components/Notification/Notification";
 import { SERVER_URL } from '../../common/config';
+import { GOOGLE_MAP_API_KEY } from '../../common/config';
 import fetchCompany from "../../services/company/CompanyService";
+import Geocode from "react-geocode";
+Geocode.setApiKey(GOOGLE_MAP_API_KEY);
 
 const positions = [
     toast.POSITION.TOP_LEFT,
@@ -165,7 +168,31 @@ function EditClient(props) {
     //input fields event
     const handleChange = (e, field) => {
         let comboFields = ['company_entity_name'];
-        if (comboFields.includes(field)) {
+        if (field == "address") {
+            const { name, value } = e.target;
+            console.log("$$$$$$$$$", value)
+            setState(prevState => ({
+                ...prevState,
+                address: value
+            }))
+            Geocode.fromAddress(value).then(
+                response => {
+                    const { lat, lng } = response.results[0].geometry.location;
+                    console.log(lat, lng);
+                    setState(prevState => ({
+                        ...prevState,
+                        location: lat + ' ' + lng
+                    }))
+                },
+                error => {
+                    console.error(error);
+                    setState(prevState => ({
+                        ...prevState,
+                        location: ''
+                    }))
+                }
+            );
+        } else if(comboFields.includes(field)) {
             setCompanyIdfromCompanyName(e)
             setState(prevState => ({
                 ...prevState, [field]: e
@@ -248,7 +275,7 @@ function EditClient(props) {
                                 <CustomInput req={true} title="Address" value={state.address} handleChange={(e) => handleChange(e, 'address')} />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
-                                <CustomInput req={true} title="Location(For example: -123.1231 -23.3452)" value={state.location} handleChange={(e) => handleChange(e, 'location')} />
+                                <CustomInput req={true} title="Location(lat lng)" value={state.location} handleChange={(e) => handleChange(e, 'location')} />
                             </Grid>
 
                         </Grid>

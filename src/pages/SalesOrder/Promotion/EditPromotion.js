@@ -180,7 +180,7 @@ function EditPromotionPage(props) {
                                     handleChange={(e) => handleTypeChange(e, 'type')} />
                             </Grid>
                             <Grid item xs={12} sm={4} md={4} lg={4} className={classes.formContainer}>
-                                <CustomInput req={true} title={state.type!='TOTAL'?'Amount(%)':'Amount'} value={state.amount}
+                                <CustomInput req={true} title={state.type=='TOTAL'?'Amount(Price)':(state.type=="UNIT"?'Amount(units)': 'Amount(%)')} value={state.amount}
                                     handleChange={(e) => handleChange(e, 'amount')} />
                             </Grid>
                         </Grid>

@@ -43,6 +43,7 @@ import PromotionPage from '../../pages/SalesOrder/Promotion/Promotion'
 import AddPromotionPage from '../../pages/SalesOrder/Promotion/AddPromotion'
 import EditPromotionPage from '../../pages/SalesOrder/Promotion/EditPromotion'
 import TargetPage from '../../pages/SalesOrder/Target/Target'
+import SettingPage from '../../pages/Setting/Setting'
 // import EditItemPage from '../../pages/SalesOrder/Item/EditItem'
 import Footer from "../Footer/Footer";
 
@@ -100,6 +101,7 @@ function Layout(props) {
                 <Route exact path="/app/salesorder/promotion" component={PromotionPage} />
                 <Route exact path="/app/salesorder/promotion/add" component={AddPromotionPage} />
                 <Route exact path="/app/salesorder/promotion/:promotion/edit" component={EditPromotionPage} />
+                <Route exact path="/app/salesorder/setting" component={SettingPage} />
                 {/* <Route exact path="/app/salesorder/item/:salesorder_item/edit" component={EditItemPage} /> */}
                 <Route component={Error} />
               </Switch>

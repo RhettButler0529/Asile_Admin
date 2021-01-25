@@ -301,7 +301,7 @@ function AddItemPage(props) {
                                 <CustomInput req={true} title="Name" value={state.item_name}
                                     handleChange={(e) => handleChange(e, 'item_name')} />
                             </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
                                 <CustomCombobox req={true} name="Client Name" items={clientList} value={state.client_name}
                                     handleChange={(e) => handleChange(e, 'client_name')} />
                             </Grid>

@@ -246,12 +246,12 @@ function DiscountPage(props) {
 
   return (
     <>
-      <PageTitle title="Discount" button={["Add New"]} data={dataSource} category="salesorder_discount" history={history} />
+      <PageTitle title="Discounts" button={["Add New"]} data={dataSource} category="salesorder_discount" history={history} />
       <Grid container spacing={4}>
         <Grid item xs={12} md={12}>
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
-              title={"Discount"}
+              title={"Discounts"}
               data={dataSource}
               // data={salesviewData.salesview}
               columns={columns}

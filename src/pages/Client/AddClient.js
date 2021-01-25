@@ -18,6 +18,9 @@ import fetchCompany from "../../services/company/CompanyService";
 import { toast, ToastContainer } from "react-toastify";
 import Notification from "../../components/Notification/Notification";
 import { SERVER_URL } from '../../common/config';
+import { GOOGLE_MAP_API_KEY } from '../../common/config';
+import Geocode from "react-geocode";
+Geocode.setApiKey(GOOGLE_MAP_API_KEY);
 
 const positions = [
     toast.POSITION.TOP_LEFT,
@@ -103,7 +106,31 @@ function AddClient(props) {
     //input fields event
     const handleChange = (e, field) => {
         let comboFields = ['company_entity_name'];
-        if (comboFields.includes(field)) {
+        if (field == "address") {
+            const { name, value } = e.target;
+            console.log("$$$$$$$$$", value)
+            setState(prevState => ({
+                ...prevState,
+                address: value
+            }))
+            Geocode.fromAddress(value).then(
+                response => {
+                    const { lat, lng } = response.results[0].geometry.location;
+                    console.log(lat, lng);
+                    setState(prevState => ({
+                        ...prevState,
+                        location: lat + ' ' + lng
+                    }))
+                },
+                error => {
+                    console.error(error);
+                    setState(prevState => ({
+                        ...prevState,
+                        location: ''
+                    }))
+                }
+            );
+        } else if (comboFields.includes(field)) {
             setCompanyIdfromCompanyName(e)
             setState(prevState => ({
                 ...prevState, [field]: e
@@ -162,7 +189,7 @@ function AddClient(props) {
                     } else if (data.id != 0) {
 
                         handleNotificationCall("shipped");
-                        setState(()=>({
+                        setState(() => ({
                             ...state,
                             id: '',
                             entity_name: '',
@@ -229,7 +256,7 @@ function AddClient(props) {
                     } else if (data.id != 0) {
 
                         handleNotificationCall("shipped");
-                        setState(()=>({
+                        setState(() => ({
                             ...state,
                             id: '',
                             entity_name: '',

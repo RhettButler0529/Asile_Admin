@@ -322,12 +322,12 @@ function HistoryPage(props) {
 
   return (
     <>
-      <PageTitle title="Orders to History" data={dataSource} category="history" history={history} />
+      <PageTitle title="Orders History" data={dataSource} category="history" history={history} />
       <Grid container spacing={4}>
         <Grid item xs={12} md={12}>
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
-              title={"Orders to History"}
+              title={"Orders History"}
               // data={HistoryData.History}
               data={dataSource}
               columns={columns}
