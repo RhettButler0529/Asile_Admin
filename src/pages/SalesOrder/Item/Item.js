@@ -12,7 +12,7 @@ import PageTitle from "../../../components/PageTitle/PageTitle";
 import { bindActionCreators } from "redux";
 import { useHistory } from "react-router-dom";
 import { useSelector, connect } from "react-redux";
-// import fetchSalesClientView from "../../services/salesview/SalesClientViewService";
+import fetchSalesItem from "../../../services/salesorder/SalesItemService";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from '../../../common/config';
@@ -22,28 +22,12 @@ function ItemPage(props) {
   let history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);   // Table action menu
   const [selectedRowIndex, setSelectedRowIndex] = useState(0);
-  const [dataSource, setDataSource] = useState([
-    {
-      item_id: 1,
-      item_name: 'Item Name1',
-      company_entity_name: 'CompanyA',
-      unit_price: 10,
-      unit: 900,
-    },
-    {
-      item_id: 2,
-      item_name: 'Item Name2',
-      company_entity_name: 'CompanyB',
-      unit_price: 21,
-      unit: 98745,
-    }
-
-  ]);
-  // const salesviewData = useSelector(state => state.salesview);
-
-
+  const [dataSource, setDataSource] = useState([]);
+  const salesItemData = useSelector(state => state.salesitem);
+   
   //Show notification
   const notify = (message) => toast(message);
+
   const getMuiTheme = () => createMuiTheme({
     overrides: {
       MUIDataTableBodyCell: {
@@ -66,8 +50,8 @@ function ItemPage(props) {
     },
   })
   useEffect(() => {
-    // props.fetchSalesClientView()
-    // setDataSource(salesviewData.salesview);
+    props.fetchSalesItem()
+    setDataSource(salesItemData.salesitem);
   }, [])
 
   const columns = [
@@ -90,6 +74,14 @@ function ItemPage(props) {
     {
       name: "company_entity_name",
       label: "Company",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: "category_name",
+      label: "Category",
       options: {
         filter: true,
         sort: true,
@@ -158,41 +150,41 @@ function ItemPage(props) {
     fixedHeader: false, elevation: 0,
     rowsPerPageOptions: [5, 10, 20],
     resizableColumns: false,
-    // onRowsDelete: (rowsDeleted) => {
+    onRowsDelete: (rowsDeleted) => {
 
-    //   const delete_id = []
-    //   rowsDeleted.data.map((data) => {
-    //     const newDeleteId = salesviewData.salesview[data.dataIndex].sales_client_id
-    //     delete_id.push(newDeleteId)
-    //   })
-    //   console.log("deleting Ids===> ", delete_id)
-    //   delete_id.map((id) => {
-    //     // row delete api call
-    //     const requestOptions = {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify({
-    //         sales_client_id: id
-    //       })
-    //     };
-    //     fetch(`${SERVER_URL}deleteSalesClient`, requestOptions)
-    //       .then(async response => {
-    //         const data = await response.json();
-    //         console.log("Response Data=============>", data)
-    //         // check for error response
-    //         if (!response.ok) {
-    //           // get error message from body or default to response status
-    //           const error = (data && data.message) || response.status;
-    //           return Promise.reject(error);
-    //         }
-    //         return
-    //       })
-    //       .catch(error => {
-    //         notify('Something went wrong!\n' + error)
-    //         console.error('There was an error!', error);
-    //       });
-    //   })
-    // },
+      const delete_id = []
+      rowsDeleted.data.map((data) => {
+        const newDeleteId = salesItemData.salesitem[data.dataIndex].order_id
+        delete_id.push(newDeleteId)
+      })
+      console.log("deleting Ids===> ", delete_id)
+      delete_id.map((id) => {
+        // row delete api call
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            item_id: id
+          })
+        };
+        fetch(`${SERVER_URL}removeItem`, requestOptions)
+          .then(async response => {
+            const data = await response.json();
+            console.log("Response Data=============>", data)
+            // check for error response
+            if (!response.ok) {
+              // get error message from body or default to response status
+              const error = (data && data.message) || response.status;
+              return Promise.reject(error);
+            }
+            return
+          })
+          .catch(error => {
+            notify('Something went wrong!\n' + error)
+            console.error('There was an error!', error);
+          });
+      })
+    },
     onTableChange: (action, tableState) => {
       console.log(action, tableState);
       let tmp = [];
@@ -253,8 +245,8 @@ function ItemPage(props) {
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
               title={"Items Database"}
-              data={dataSource}
-              // data={salesviewData.salesview}
+              // data={dataSource}
+              data={salesItemData.salesitem}
               columns={columns}
               options={options}
             />
@@ -279,11 +271,11 @@ function ItemPage(props) {
 
 
 const mapStateToProps = state => ({
-  // sales: state.sales
+  salesitem: state.salesitem
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  // fetchSalesClientView: fetchSalesClientView
+  fetchSalesItem: fetchSalesItem
 }, dispatch)
 
 export default connect(

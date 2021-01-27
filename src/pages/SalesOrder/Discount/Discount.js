@@ -12,7 +12,7 @@ import PageTitle from "../../../components/PageTitle/PageTitle";
 import { bindActionCreators } from "redux";
 import { useHistory } from "react-router-dom";
 import { useSelector, connect } from "react-redux";
-// import fetchSalesClientView from "../../services/salesview/SalesClientViewService";
+import fetchDiscount from "../../../services/salesorder/SalesDiscountService";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from '../../../common/config';
@@ -22,27 +22,12 @@ function DiscountPage(props) {
   let history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);   // Table action menu
   const [selectedRowIndex, setSelectedRowIndex] = useState(0);
-  const [dataSource, setDataSource] = useState([
-    {
-      discount_id: 1,
-      item_name: 'Item Name1',
-      min_quantity: 50,
-      max_quantity: 100,
-      unit: 5
-    },
-    {
-      discount_id: 1,
-      item_name: 'Item Name1',
-      min_quantity: 101,
-      max_quantity: 200,
-      unit: 15
-    }
-
-  ]);
-  // const salesviewData = useSelector(state => state.salesview);
-
+  const [dataSource, setDataSource] = useState([]);
+  const discountData = useSelector(state => state.discount);
 
   //Show notification
+  const notify = (message) => toast(message);
+
   const getMuiTheme = () => createMuiTheme({
     overrides: {
       MUIDataTableBodyCell: {
@@ -65,8 +50,8 @@ function DiscountPage(props) {
     },
   })
   useEffect(() => {
-    // props.fetchSalesClientView()
-    // setDataSource(salesviewData.salesview);
+    props.fetchDiscount()
+    setDataSource(discountData.discount);
   }, [])
 
   const columns = [
@@ -103,7 +88,7 @@ function DiscountPage(props) {
       }
     },
     {
-      name: "unit",
+      name: "amount",
       label: "Unit",
       options: {
         filter: true,
@@ -157,41 +142,41 @@ function DiscountPage(props) {
     fixedHeader: false, elevation: 0,
     rowsPerPageOptions: [5, 10, 20],
     resizableColumns: false,
-    // onRowsDelete: (rowsDeleted) => {
+    onRowsDelete: (rowsDeleted) => {
 
-    //   const delete_id = []
-    //   rowsDeleted.data.map((data) => {
-    //     const newDeleteId = salesviewData.salesview[data.dataIndex].sales_client_id
-    //     delete_id.push(newDeleteId)
-    //   })
-    //   console.log("deleting Ids===> ", delete_id)
-    //   delete_id.map((id) => {
-    //     // row delete api call
-    //     const requestOptions = {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify({
-    //         sales_client_id: id
-    //       })
-    //     };
-    //     fetch(`${SERVER_URL}deleteSalesClient`, requestOptions)
-    //       .then(async response => {
-    //         const data = await response.json();
-    //         console.log("Response Data=============>", data)
-    //         // check for error response
-    //         if (!response.ok) {
-    //           // get error message from body or default to response status
-    //           const error = (data && data.message) || response.status;
-    //           return Promise.reject(error);
-    //         }
-    //         return
-    //       })
-    //       .catch(error => {
-    //         notify('Something went wrong!\n' + error)
-    //         console.error('There was an error!', error);
-    //       });
-    //   })
-    // },
+      const delete_id = []
+      rowsDeleted.data.map((data) => {
+        const newDeleteId = discountData.discount[data.dataIndex].discount_id
+        delete_id.push(newDeleteId)
+      })
+      console.log("deleting Ids===> ", delete_id)
+      delete_id.map((id) => {
+        // row delete api call
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            discount_id: id
+          })
+        };
+        fetch(`${SERVER_URL}removeDiscount`, requestOptions)
+          .then(async response => {
+            const data = await response.json();
+            console.log("Response Data=============>", data)
+            // check for error response
+            if (!response.ok) {
+              // get error message from body or default to response status
+              const error = (data && data.message) || response.status;
+              return Promise.reject(error);
+            }
+            return
+          })
+          .catch(error => {
+            notify('Something went wrong!\n' + error)
+            console.error('There was an error!', error);
+          });
+      })
+    },
     onTableChange: (action, tableState) => {
       console.log(action, tableState);
       let tmp = [];
@@ -203,73 +188,21 @@ function DiscountPage(props) {
 
   };
 
-
-  const importCSV = (data) => {
-    console.log(data)
-    addWithCSV(data)
-  }
-
-  const addWithCSV = (data) => {
-    // for (let i = 1; i < data.length - 1; i++) {
-    //   const row = data[i];
-    //   let saveData = {
-    //     user_id: row[0],
-    //     client_id: row[1],
-    //   }
-    //   const reqOption = {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(saveData)
-    //   }
-    //   fetch(`${SERVER_URL}addSalesClientWithCSV`, reqOption)
-    //     .then(async response => {
-    //       const data = await response.json();
-    //       console.log("Response Data=============>", data)
-    //       // check for error response
-    //       if (!response.ok) {
-    //         const error = (data && data.message) || response.status;
-    //         return Promise.reject(error);
-    //       } else if (data.client_id != null) {
-    //         notify("This client is already exist.")
-    //         return
-    //       } else if (data.id != 0) {
-
-    //         notify("Successfully appended");
-    //       }
-    //     })
-    //     .catch(error => {
-    //       notify('Something went wrong!\n' + error)
-    //       console.error('There was an error!', error);
-    //     });
-    // }
-  }
-
   return (
     <>
-      <PageTitle title="Discounts" button={["Add New"]} data={dataSource} category="salesorder_discount" history={history} />
+      {/* <PageTitle title="Discounts" button={["Add New"]} data={dataSource} category="salesorder_discount" history={history} /> */}
       <Grid container spacing={4}>
         <Grid item xs={12} md={12}>
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
               title={"Discounts"}
-              data={dataSource}
-              // data={salesviewData.salesview}
+              // data={dataSource}
+              data={discountData.discount}
               columns={columns}
               options={options}
             />
           </MuiThemeProvider>
 
-        </Grid>
-      </Grid>
-      <Grid container spacing={1}>
-        <Grid item xs={6} md={6} lg={6}></Grid>
-        <Grid item xs={4} md={4} lg={4}>
-          <CSVReader label="Import CSV: " onFileLoaded={(data) => importCSV(data)} />
-        </Grid>
-        <Grid item xs={2} md={2} lg={2}>
-          <Button variant="outlined" color="primary" onClick={() => { window.location.reload() }}>
-            See Result
-          </Button>
         </Grid>
       </Grid>
     </>
@@ -278,11 +211,11 @@ function DiscountPage(props) {
 
 
 const mapStateToProps = state => ({
-  // sales: state.sales
+  discount: state.discount
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  // fetchSalesClientView: fetchSalesClientView
+  fetchDiscount: fetchDiscount
 }, dispatch)
 
 export default connect(

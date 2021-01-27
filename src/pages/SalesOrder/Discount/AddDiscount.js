@@ -25,6 +25,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import CustomInput from "../../../components/FormControls/CustomInput";
+import DiscountPage from './Discount'
 
 const positions = [
     toast.POSITION.TOP_LEFT,
@@ -52,137 +53,214 @@ function AddDiscountPage(props) {
     const [errorToastId, setErrorToastId] = useState(null);
     var [notificationsPosition, setNotificationPosition] = useState(2);
     const [dataSource, setDataSource] = useState([]);
-    // const userData = useSelector(state => state.userview);
-    // const clientData = useSelector(state => state.clientview);
 
-    // input form datas
     const [state, setState] = useState({
         item_name: '',
         itemList: [],
+        itemNameList: [],
         min_quantity: '',
         max_quantity: '',
         amount: ''
     })
 
     useEffect(() => {
-        // props.fetchClientView()
-        // props.fetchUserView();
+        getItems()
     }, [])
 
-    // const [userList, setUserList] = React.useState([]);
+    const getItems = () => {
+        let body = {
+            company_id: localStorage.getItem('company_id')
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        };
+        fetch(`${SERVER_URL}getItemsbyCompanyId`, requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                // check for error response
+                if (!response.ok) {
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                console.log("groupdData--> ", data)
+                let list = []
+                data.map(item => {
+                    list.push(item.item_name)
+                })
+                setState({
+                    ...state,
+                    itemList: data,
+                    itemNameList: list,
+                })
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    }
 
     //Show notification
     const notify = (message) => toast(message);
 
-    //input fields event
-    const handleChange = (e, field) => {
+    const setItemIdfromItemName = (item_name) => {
+        let object = state.itemList.filter(item => item.item_name == item_name)
+        if (object[0] != null) {
+            console.log("object[0].item_id==>", object[0].item_id)
+            setState({
+                ...state,
+                item_id: object[0].item_id
+            })
+        }
 
-        setState({
-            ...state,
-            [field]: e.target.value,
-        })
     }
 
+    const handleChange = (e, field) => {
+
+        if (field == 'item_name') {
+            setItemIdfromItemName(e)
+            setState(prevState => ({
+                ...prevState, [field]: e
+            }))
+        } else {
+            const { name, value } = e.target;
+            setState(prevState => ({
+                ...prevState, [field]: value
+            }))
+        }
+    }
 
     const onSaveandNew = () => {
-        // if (state.item_name == null || state.item_name == "") {
-        //     notify("Please enter item name.")
-        //     return
-        // } else {
-        //     const requestOptions = {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({
-        //             client_id: state.client_id,
-        //             // user_id: state.userIDList,
-        //         })
-        //     };
-        //     fetch(`${SERVER_URL}addSalesClient`, requestOptions)
-        //         .then(async response => {
-        //             const data = await response.json();
-        //             console.log("Response Data=============>", data)
-        //             // check for error response
-        //             if (!response.ok) {
-        //                 // get error message from body or default to response status
-        //                 const error = (data && data.message) || response.status;
-        //                 return Promise.reject(error);
-        //             } else if (data.sales_client_id != null) {
-        //                 notify("This client is already exist.")
-        //                 return
-        //             } else if (data.id != 0) {
+        if (state.item_name == null || state.item_name == "") {
+            notify("Please enter item name.")
+            return
+        } else if (state.amount == null || state.amount == "") {
+            notify("Please enter amount.")
+            return
+        } else if (state.min_quantity == null || state.min_quantity == "") {
+            notify("Please enter min quantity.")
+            return
+        } else if (state.max_quantity == null || state.max_quantity == "") {
+            notify("Please enter max quantity.")
+            return
+        } else if (Number(state.min_quantity) > Number(state.max_quantity)) {
+            notify("Please enter valid values.")
+            return
+        } else if (Number(state.min_quantity) < 0) {
+            notify("Please enter valid min quality.")
+            return
+        } else if (Number(state.max_quantity) < 0) {
+            notify("Please enter valid max quality.")
+            return
+        } else {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    item_id: state.item_id,
+                    amount: state.amount,
+                    min_quantity: state.min_quantity,
+                    max_quantity: state.max_quantity
+                })
+            };
+            fetch(`${SERVER_URL}createDiscount`, requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    console.log("Response Data=============>", data)
+                    // check for error response
+                    if (!response.ok) {
+                        // get error message from body or default to response status
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    } else if (data.discount_id == 0) {
+                        notify("This discount is already exist.")
+                        return
+                    } else if (data.discount_id != 0) {
 
-        //                 handleNotificationCall("shipped");
-        //                 setState(() => ({
-        //                     client_name: '',
-        //                     user_name: "",
-        //                     client_id: '',
-        //                     user_id: '',
-        //                 }))
+                        handleNotificationCall("shipped");
+                        setState({
+                            ...state,
+                            item_id: '',
+                            amount: '',
+                            min_quantity: '',
+                            max_quantity: '',
+                            item_name: ''
+                        })
 
-        //             }
+                    }
 
-        //         })
-        //         .catch(error => {
-        //             notify('Something went wrong!\n' + error)
-        //             console.error('There was an error!', error);
-        //         });
-        // }
+                })
+                .catch(error => {
+                    notify('Something went wrong!\n' + error)
+                    console.error('There was an error!', error);
+                });
+        }
     }
 
     const onSaveandBack = () => {
-        // if (state.item_name == null || state.item_name == "") {
-        //     notify("Please enter client name.")
-        //     return
-        // } else {
-        //     const requestOptions = {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({
-        //             client_id: state.client_id,
-        //             // user_id: state.userIDList,
-        //         })
-        //     };
-        //     fetch(`${SERVER_URL}addSalesClient`, requestOptions)
-        //         .then(async response => {
-        //             const data = await response.json();
-        //             console.log("Response Data=============>", data)
-        //             // check for error response
-        //             if (!response.ok) {
-        //                 // get error message from body or default to response status
-        //                 const error = (data && data.message) || response.status;
-        //                 return Promise.reject(error);
-        //             } else if (data.sales_client_id != null) {
-        //                 notify("This client is already exist.")
-        //                 return
-        //             } else if (data.id != 0) {
+        if (state.item_name == null || state.item_name == "") {
+            notify("Please enter item name.")
+            return
+        } else if (state.amount == null || state.amount == "") {
+            notify("Please enter amount.")
+            return
+        } else if (state.min_quantity == null || state.min_quantity == "") {
+            notify("Please enter min quantity.")
+            return
+        } else if (state.max_quantity == null || state.max_quantity == "") {
+            notify("Please enter max quantity.")
+            return
+        } else if (Number(state.min_quantity) > Number(state.max_quantity)) {
+            notify("Please enter valid values.")
+            return
+        } else if (Number(state.min_quantity) < 0) {
+            notify("Please enter valid min quality.")
+            return
+        } else if (Number(state.max_quantity) < 0) {
+            notify("Please enter valid max quality.")
+            return
+        } else {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    item_id: state.item_id,
+                    amount: state.amount,
+                    min_quantity: state.min_quantity,
+                    max_quantity: state.max_quantity
+                })
+            };
+            fetch(`${SERVER_URL}createDiscount`, requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    console.log("Response Data=============>", data)
+                    // check for error response
+                    if (!response.ok) {
+                        // get error message from body or default to response status
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    } else if (data.discount_id == 0) {
+                        notify("This discount is already exist.")
+                        return
+                    } else if (data.discount_id != 0) {
 
-        //                 handleNotificationCall("shipped");
-        //                 setState(() => ({
-        //                     client_name: '',
-        //                     user_name: "",
-        //                     client_id: '',
-        //                     user_id: '',
-        //                 }))
-        //                 history.push("/app/salesview");
+                        handleNotificationCall("shipped");
+                        history.push("/app/salesorder/item/add");
+                    }
 
-        //             }
-
-        //         })
-        //         .catch(error => {
-        //             notify('Something went wrong!\n' + error)
-        //             console.error('There was an error!', error);
-        //         });
-        // }
+                })
+                .catch(error => {
+                    notify('Something went wrong!\n' + error)
+                    console.error('There was an error!', error);
+                });
+        }
 
     }
 
     const onCancel = () => {
-        history.push("/app/salesorder/discount");
+        history.push("/app/salesorder/item/add");
     }
-
-    // const clientList = clients.map(item => {
-    //     return item?.value
-    // })
 
     return (
         <>
@@ -216,7 +294,7 @@ function AddDiscountPage(props) {
                         </Grid>
                         <Grid container spacing={1}>
                             <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
-                                <CustomInput req={true} title="Name" value={state.item_name}
+                                <CustomCombobox req={true} name="Item Name" items={state.itemNameList} value={state.item_name}
                                     handleChange={(e) => handleChange(e, 'item_name')} />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
@@ -269,6 +347,7 @@ function AddDiscountPage(props) {
                     </Widget>
                 </Grid>
             </Grid>
+            <DiscountPage/>
         </>
     );
 

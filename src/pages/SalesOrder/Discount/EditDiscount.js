@@ -7,20 +7,24 @@ import useStyles from "./styles";
 
 // components
 import Widget from "../../../components/Widget/Widget";
-import { Typography } from "../../../components/Wrappers/Wrappers";
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector, connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CustomDatePicker from "../../../components/FormControls/CustomDatePicker";
-import CustomInput from "../../../components/FormControls/CustomInput";
 import CustomCombobox from "../../../components/FormControls/CustomCombobox";
 import * as Icons from "@material-ui/icons";
 import { toast, ToastContainer } from "react-toastify";
 import Notification from "../../../components/Notification/Notification";
-// import fetchClientView from "../../../services/clientview/ClientViewService";
+import fetchClientView from "../../../services/clientview/ClientViewService";
 // import fetchUserView from "../../../services/users/UserViewService";
 import { SERVER_URL } from '../../../common/config';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import ListItemText from '@material-ui/core/ListItemText';
+import Select from '@material-ui/core/Select';
+import Checkbox from '@material-ui/core/Checkbox';
+import CustomInput from "../../../components/FormControls/CustomInput";
 
 const positions = [
     toast.POSITION.TOP_LEFT,
@@ -31,206 +35,187 @@ const positions = [
     toast.POSITION.BOTTOM_RIGHT,
 ];
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
 function EditDiscountPage(props) {
     var classes = useStyles();
     let history = useHistory();
     const [errorToastId, setErrorToastId] = useState(null);
     var [notificationsPosition, setNotificationPosition] = useState(2);
-    // const userData = useSelector(state => state.userview);
-    // const clientData = useSelector(state => state.clientview);
+    const [dataSource, setDataSource] = useState([]);
+    const update_id = props.match.params.discount
+    const [state, setState] = useState({
+        item_name: update_id,
+        itemList: [],
+        itemNameList: [],
+        min_quantity: '',
+        max_quantity: '',
+        amount: ''
+    })
+
+    useEffect(() => {
+        getItems()
+        getDiscountbyId(update_id)
+    }, [])
+
+    const getItems = () => {
+        let body = {
+            company_id: localStorage.getItem('company_id')
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        };
+        fetch(`${SERVER_URL}getItemsbyCompanyId`, requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                // check for error response
+                if (!response.ok) {
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                console.log("groupdData--> ", data)
+                let list = []
+                data.map(item => {
+                    list.push(item.item_name)
+                })
+                setState({
+                    ...state,
+                    itemList: data,
+                    itemNameList: list,
+                })
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    }
+
+    const getDiscountbyId = (update_id) => {
+        let body = {
+            discount_id: update_id
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        };
+        fetch(`${SERVER_URL}getDiscountsbyId`, requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                // check for error response
+                if (!response.ok) {
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                console.log("get Data@--> ", data)
+                setState({
+                    ...state,
+                    item_id: data.item_id,
+                    item_name: data.item_name,
+                    min_quantity: data.min_quantity,
+                    max_quantity: data.max_quantity,
+                    amount: data.amount
+                })
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    }
 
     //Show notification
     const notify = (message) => toast(message);
 
-    // input form datas
-    const update_id = props.match.params.discount
-    const [state, setState] = useState({
-        discount_id: update_id,
-        item_name: 'Item Name1',
-        min_quantity: 50,
-        max_quantity: 100,
-        unit: 5
-    })
-
-    useEffect(() => {
-        // props.fetchClientView()
-        // props.fetchUserView();
-        // getSalesClientInfo(update_id)
-    }, [])
-
     const handleChange = (e, field) => {
-        e.persist();
-        setState(prevState => ({
-            ...prevState, [field]: e.target.value
-        }))
+
+        if (field == "item_name") {
+            notify("You can't change the item name.")
+        } else {
+            const { name, value } = e.target;
+            setState(prevState => ({
+                ...prevState, [field]: value
+            }))
+        }
+
     }
 
-    // const getSalesClientInfo = (sales_client_id) => {
-    //     const requestOptions = {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify({
-    //             sales_client_id: sales_client_id
-    //         })
-    //     };
-    //     fetch(`${SERVER_URL}getSalesClientById`, requestOptions)
-    //         .then(async response => {
-    //             const data = await response.json();
-    //             // check for error response
-    //             if (!response.ok) {
-    //                 // get error message from body or default to response status
-    //                 const error = (data && data.message) || response.status;
-    //                 return Promise.reject(error);
-    //             }
-    //             setState(() => ({
-    //                 ...state,
-    //                 client_name: data.client_entity_name,
-    //                 user_name: data.full_name,
-    //                 client_id: data.client_id.toString(),
-    //                 user_id: data.user_id.toString()
-    //             }))
-    //         })
-    //         .catch(error => {
-    //             console.error('There was an error!', error);
-    //         });
-    // }
+    const onSaveandNew = () => {
+        if (state.item_name == null || state.item_name == "") {
+            notify("Please enter item name.")
+            return
+        } else if (state.amount == null || state.amount == "") {
+            notify("Please enter amount.")
+            return
+        } else if (state.min_quantity == null || state.min_quantity == "") {
+            notify("Please enter min quantity.")
+            return
+        } else if (state.max_quantity == null || state.max_quantity == "") {
+            notify("Please enter max quantity.")
+            return
+        } else if (Number(state.min_quantity) > Number(state.max_quantity)) {
+            notify("Please enter valid values.")
+            return
+        } else if (Number(state.min_quantity) < 0) {
+            notify("Please enter valid min quality.")
+            return
+        } else if (Number(state.max_quantity) < 0) {
+            notify("Please enter valid max quality.")
+            return
+        } else {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    discount_id: update_id,
+                    item_id: state.item_id,
+                    amount: state.amount,
+                    min_quantity: state.min_quantity,
+                    max_quantity: state.max_quantity
+                })
+            };
+            fetch(`${SERVER_URL}updateDiscount`, requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    console.log("Response Data=============>", data)
+                    // check for error response
+                    if (!response.ok) {
+                        // get error message from body or default to response status
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    } else if (data.discount_id == 0) {
+                        notify("This discount is already exist.")
+                        return
+                    } else if (data.discount_id != 0) {
 
-    // const getClientNameList = (original) => {
-    //     console.log('originall ====> ', original, clientData.clientview)
-    //     let tmp = [];
-    //     if (Boolean(original)) {
-    //         if (original.length) {
-    //             original.map(item => {
-    //                 let optionData = {
-    //                     key: item?.client_id,
-    //                     value: item?.client_entity_name
-    //                 }
-    //                 tmp.push(optionData);
-    //             })
-    //             return tmp;
-    //         }
-    //         return [];
-    //     } else {
-    //         return []
-    //     }
-    // }
+                        handleNotificationCall("shipped");
+                    }
 
-    // const clients = getClientNameList(clientData.clientview)
-
-    // console.log("Client Data =====> ", clients.map(item => {
-    //     return item?.value
-    // }))
-
-    // const getUserNameList = (original) => {
-    //     console.log('originall ====> ', original, userData.userview)
-    //     let tmp = [];
-    //     if (Boolean(original)) {
-    //         if (original.length) {
-    //             original.map(item => {
-    //                 let optionData = {
-    //                     key: item?.user_id,
-    //                     value: item?.full_name
-    //                 }
-    //                 tmp.push(optionData);
-    //             })
-    //             return tmp;
-    //         }
-    //         return [];
-    //     } else {
-    //         return []
-    //     }
-    // }
-
-    // const users = getUserNameList(userData.userview)
-
-    //input fields event
-    // const handleUserChange = (e, field) => {
-
-    //     if (field == "user_name") {
-    //         if (users.filter(item => item.value == e)[0] != null) {
-    //             setState({
-    //                 ...state,
-    //                 user_name: e,
-    //                 user_id: users.filter(item => item.value == e)[0].key
-    //             })
-    //         }
-
-    //     }
-    // }
-
-    // const handleClientChange = (e, field) => {
-
-    //     if (field == "client_name") {
-    //         if (clients.filter(item => item.value == e)[0] != null) {
-    //             setState({
-    //                 ...state,
-    //                 client_name: e,
-    //                 client_id: clients.filter(item => item.value == e)[0].key
-    //             })
-    //         }
-
-    //     }
-    // }
-
-    const onSave = () => {
-        // if (state.user_name == null || state.user_name == "") {
-        //     notify("Please enter company user name.")
-        //     return
-        // } else if (state.client_name == null || state.client_name == "") {
-        //     notify("Please enter client name.")
-        //     return
-        // } else {
-        //     const requestOptions = {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({
-        //             sales_client_id: update_id,
-        //             client_id: state.client_id,
-        //             user_id: state.user_id,
-        //         })
-        //     };
-        //     console.log("===============> ", requestOptions.body)
-        //     fetch(`${SERVER_URL}updateSalesClient`, requestOptions)
-        //         .then(async response => {
-        //             const data = await response.json();
-        //             console.log("Response Data=============>", data)
-        //             // check for error response
-        //             if (!response.ok) {
-        //                 // get error message from body or default to response status
-        //                 const error = (data && data.message) || response.status;
-        //                 return Promise.reject(error);
-        //             } else if (data.sales_client_id != null) {
-        //                 notify("This client is already exist.")
-        //                 return
-        //             } else if (data.id != 0) {
-
-        //                 handleNotificationCall("shipped");
-        //             }
-
-        //         })
-        //         .catch(error => {
-        //             notify('Something went wrong!\n' + error)
-        //             console.error('There was an error!', error);
-        //         });
-        // }
+                })
+                .catch(error => {
+                    notify('Something went wrong!\n' + error)
+                    console.error('There was an error!', error);
+                });
+        }
     }
 
     const onCancel = () => {
         history.push("/app/salesorder/discount");
     }
 
-
-    // const userList = users.map(item => {
-    //     return item?.value
-    // })
-
-    // const clientList = clients.map(item => {
-    //     return item?.value
-    // })
-
     return (
         <>
-            <PageTitle title="Edit Discount" />
+            <PageTitle title="Edit Item Discount" />
             <Grid container spacing={4}>
                 <ToastContainer
                     className={classes.toastsContainer}
@@ -243,18 +228,16 @@ function EditDiscountPage(props) {
                 <Grid item xs={12} md={12}>
                     <Widget title="" disableWidgetMenu>
                         <Grid container spacing={1}>
-
                             <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
                                 <CustomInput req={true} title="Item Name" value={state.item_name}
                                     handleChange={(e) => handleChange(e, 'item_name')} />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
-                                <CustomInput req={true} title="Unit" value={state.unit} handleChange={(e) => handleChange(e, 'unit')} />
+                                <CustomInput req={true} title="Amount" value={state.amount}
+                                    handleChange={(e) => handleChange(e, 'amount')} />
                             </Grid>
-
                         </Grid>
                         <Grid container spacing={1}>
-
                             <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
                                 <CustomInput req={true} title="Min Quantity" value={state.min_quantity}
                                     handleChange={(e) => handleChange(e, 'min_quantity')} />
@@ -263,14 +246,23 @@ function EditDiscountPage(props) {
                                 <CustomInput req={true} title="Max Quantity" value={state.max_quantity}
                                     handleChange={(e) => handleChange(e, 'max_quantity')} />
                             </Grid>
-
                         </Grid>
-
                         <Divider />
                         <Grid container spacing={1}>
                             <Grid item xs={8} md={8} lg={8}></Grid>
                             <Grid item xs={4} md={4} lg={4}>
                                 <Grid container spacing={2} className={classes.buttonContainer}>
+                                    <Grid item>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            className={classes.button}
+                                            startIcon={<Icons.Save />}
+                                            onClick={() => onSaveandNew()}
+                                        >
+                                            Save
+                                        </Button>
+                                    </Grid>
                                     <Grid item>
                                         <Button
                                             variant="contained"
@@ -282,18 +274,9 @@ function EditDiscountPage(props) {
                                             Cancel
                                         </Button>
                                     </Grid>
-                                    <Grid item>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            className={classes.button}
-                                            startIcon={<Icons.Save />}
-                                            onClick={() => onSave()}
-                                        >
-                                            Save
-                                        </Button>
-                                    </Grid>
+
                                 </Grid>
+
                             </Grid>
                         </Grid>
                     </Widget>
@@ -387,13 +370,13 @@ function EditDiscountPage(props) {
 }
 
 const mapStateToProps = state => ({
-    userview: state.userview,
+    // userview: state.userview,
     clientview: state.clientview
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     // fetchUserView: fetchUserView,
-    // fetchClientView: fetchClientView
+    fetchClientView: fetchClientView
 }, dispatch)
 
 export default connect(

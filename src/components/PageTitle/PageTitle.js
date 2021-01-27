@@ -86,6 +86,11 @@ export default function PageTitle(props) {
           props.history.push("/app/salesorder/promotion/add");
         }
         break;
+      case 'category':
+        if (item === 'Add New') {
+          props.history.push("/app/salesorder/group/add");
+        }
+        break;
       default:
         console.log();
     }

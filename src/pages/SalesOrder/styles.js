@@ -31,6 +31,18 @@ export default makeStyles(theme => ({
     paddingTop: 10,
     display: 'flex',
     justifyContent: 'flex-end',
-  }
+  },
+  modal: {
+    padding: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflowY: 'auto'
+  },
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    margin: 'auto',
+    padding: theme.spacing(2, 4, 3),
+  },
   //End Client Edit
 }));

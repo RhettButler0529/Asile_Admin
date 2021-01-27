@@ -118,7 +118,9 @@ function EditUser(props) {
         phone_number: state.phone_number,
         company_id: state.company_id,
         isAdmin: false,
-        isActive: state.isActive
+        isActive: state.isActive,
+        sales_target: 0,
+        allow_so: 0
       })
     };
     fetch(`${SERVER_URL}updateUser`, requestOptions)

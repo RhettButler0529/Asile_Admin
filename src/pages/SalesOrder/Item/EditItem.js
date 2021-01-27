@@ -7,19 +7,16 @@ import useStyles from "./styles";
 
 // components
 import Widget from "../../../components/Widget/Widget";
-import { Typography } from "../../../components/Wrappers/Wrappers";
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector, connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CustomDatePicker from "../../../components/FormControls/CustomDatePicker";
 import CustomInput from "../../../components/FormControls/CustomInput";
 import CustomCombobox from "../../../components/FormControls/CustomCombobox";
 import * as Icons from "@material-ui/icons";
 import { toast, ToastContainer } from "react-toastify";
 import Notification from "../../../components/Notification/Notification";
-// import fetchClientView from "../../../services/clientview/ClientViewService";
-// import fetchUserView from "../../../services/users/UserViewService";
+import fetchCompany from "../../../services/company/CompanyService";
 import { SERVER_URL } from '../../../common/config';
 
 const positions = [
@@ -36,8 +33,8 @@ function EditItemPage(props) {
     let history = useHistory();
     const [errorToastId, setErrorToastId] = useState(null);
     var [notificationsPosition, setNotificationPosition] = useState(2);
-    // const userData = useSelector(state => state.userview);
-    // const clientData = useSelector(state => state.clientview);
+    const [dataSource, setDataSource] = useState([]);
+    const companyData = useSelector(state => state.company);
 
     //Show notification
     const notify = (message) => toast(message);
@@ -46,173 +43,202 @@ function EditItemPage(props) {
     const update_id = props.match.params.item
     const [state, setState] = useState({
         item_id: update_id,
-        item_name: 'Item Name1',
-        company: 'CompanyA',
-        unit_price: 10,
-        unit: 900
+        company_entity_name: '',
+        item_name: "",
+        company_id: '',
+        category_id: '',
+        category_name: '',
+        unit_price: '',
+        unit: '',
+        companyIDList: localStorage.getItem('company_id').split(', '),
+        categoryList: [],
+        categoryNameList: []
     })
 
     useEffect(() => {
-        // props.fetchClientView()
-        // props.fetchUserView();
-        // getSalesClientInfo(update_id)
+        props.fetchCompany();
+        console.log(companyData)
+        setDataSource(companyData.company);
+        getGroup()
+        getGroupbyId()
     }, [])
 
-    const handleChange = (e, field) => {
-        e.persist();
-        setState(prevState => ({
-            ...prevState, [field]: e.target
-        }))
+    const getGroup = () => {
+        let body = {
+            company_id: localStorage.getItem('company_id')
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        };
+        fetch(`${SERVER_URL}getCategoryByCompanyId`, requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                // check for error response
+                if (!response.ok) {
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                console.log("groupdData--> ", data)
+                let list = []
+                data.map(item => {
+                    list.push(item.category_name)
+                })
+                setState({
+                    ...state,
+                    categoryList: data,
+                    categoryNameList: list
+                })
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
     }
 
-    // const getSalesClientInfo = (sales_client_id) => {
-    //     const requestOptions = {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify({
-    //             sales_client_id: sales_client_id
-    //         })
-    //     };
-    //     fetch(`${SERVER_URL}getSalesClientById`, requestOptions)
-    //         .then(async response => {
-    //             const data = await response.json();
-    //             // check for error response
-    //             if (!response.ok) {
-    //                 // get error message from body or default to response status
-    //                 const error = (data && data.message) || response.status;
-    //                 return Promise.reject(error);
-    //             }
-    //             setState(() => ({
-    //                 ...state,
-    //                 client_name: data.client_entity_name,
-    //                 user_name: data.full_name,
-    //                 client_id: data.client_id.toString(),
-    //                 user_id: data.user_id.toString()
-    //             }))
-    //         })
-    //         .catch(error => {
-    //             console.error('There was an error!', error);
-    //         });
-    // }
+    const getGroupbyId = () => {
+        let body = {
+            item_id: update_id
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        };
+        fetch(`${SERVER_URL}getItemsbyId`, requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                // check for error response
+                if (!response.ok) {
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                console.log("get Data@--> ", data)
+                setState({
+                    ...state,
+                    company_entity_name: data.company_entity_name,
+                    item_name: data.item_name,
+                    company_id: data.company_id,
+                    category_id: data.category_id,
+                    category_name: data.category_name,
+                    unit_price: data.unit_price,
+                    unit: data.unit,
+                })
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    }
 
-    // const getClientNameList = (original) => {
-    //     console.log('originall ====> ', original, clientData.clientview)
-    //     let tmp = [];
-    //     if (Boolean(original)) {
-    //         if (original.length) {
-    //             original.map(item => {
-    //                 let optionData = {
-    //                     key: item?.client_id,
-    //                     value: item?.client_entity_name
-    //                 }
-    //                 tmp.push(optionData);
-    //             })
-    //             return tmp;
-    //         }
-    //         return [];
-    //     } else {
-    //         return []
-    //     }
-    // }
+    const objArray2Array = (original) => {
+        console.log('originall ====> ', state.companyIDList)
+        let tmp = [];
+        if (Boolean(original)) {
+            if (original.length) {
+                original.map(item => {
+                    if (state.companyIDList.includes(item.company_id.toString()))
+                        tmp.push(item?.company_entity_name);
+                })
+                console.log('Temp==> ', tmp)
+                return tmp;
+            }
+            return [];
+        } else {
+            return []
+        }
+    }
 
-    // const clients = getClientNameList(clientData.clientview)
+    const companies = objArray2Array(companyData.company)
 
-    // console.log("Client Data =====> ", clients.map(item => {
-    //     return item?.value
-    // }))
+    const setCompanyIdfromCompanyName = (company_entity_name) => {
+        let object = companyData.company.filter(item => item.company_entity_name == company_entity_name)
+        if (object[0] != null) {
+            setState({
+                ...state,
+                company_id: object[0].company_id.toString()
+            })
+        }
 
-    // const getUserNameList = (original) => {
-    //     console.log('originall ====> ', original, userData.userview)
-    //     let tmp = [];
-    //     if (Boolean(original)) {
-    //         if (original.length) {
-    //             original.map(item => {
-    //                 let optionData = {
-    //                     key: item?.user_id,
-    //                     value: item?.full_name
-    //                 }
-    //                 tmp.push(optionData);
-    //             })
-    //             return tmp;
-    //         }
-    //         return [];
-    //     } else {
-    //         return []
-    //     }
-    // }
+    }
 
-    // const users = getUserNameList(userData.userview)
+    const setGroupIdfromGroupName = (category_name) => {
+        let object = state.categoryList.filter(item => item.category_name == category_name)
+        if (object[0] != null) {
+            console.log("object[0].category_id==>", object[0].category_id)
+            setState({
+                ...state,
+                category_id: object[0].category_id
+            })
+        }
 
-    //input fields event
-    // const handleUserChange = (e, field) => {
+    }
 
-    //     if (field == "user_name") {
-    //         if (users.filter(item => item.value == e)[0] != null) {
-    //             setState({
-    //                 ...state,
-    //                 user_name: e,
-    //                 user_id: users.filter(item => item.value == e)[0].key
-    //             })
-    //         }
+    const handleChange = (e, field) => {
 
-    //     }
-    // }
-
-    // const handleClientChange = (e, field) => {
-
-    //     if (field == "client_name") {
-    //         if (clients.filter(item => item.value == e)[0] != null) {
-    //             setState({
-    //                 ...state,
-    //                 client_name: e,
-    //                 client_id: clients.filter(item => item.value == e)[0].key
-    //             })
-    //         }
-
-    //     }
-    // }
+        if (field == 'company_entity_name') {
+            setCompanyIdfromCompanyName(e)
+            setState(prevState => ({
+                ...prevState, [field]: e
+            }))
+        } else if (field == 'category_name') {
+            setGroupIdfromGroupName(e)
+            setState(prevState => ({
+                ...prevState, [field]: e
+            }))
+        } else {
+            const { name, value } = e.target;
+            setState(prevState => ({
+                ...prevState, [field]: value
+            }))
+        }
+    }
 
     const onSave = () => {
-        // if (state.user_name == null || state.user_name == "") {
-        //     notify("Please enter company user name.")
-        //     return
-        // } else if (state.client_name == null || state.client_name == "") {
-        //     notify("Please enter client name.")
-        //     return
-        // } else {
-        //     const requestOptions = {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({
-        //             sales_client_id: update_id,
-        //             client_id: state.client_id,
-        //             user_id: state.user_id,
-        //         })
-        //     };
-        //     console.log("===============> ", requestOptions.body)
-        //     fetch(`${SERVER_URL}updateSalesClient`, requestOptions)
-        //         .then(async response => {
-        //             const data = await response.json();
-        //             console.log("Response Data=============>", data)
-        //             // check for error response
-        //             if (!response.ok) {
-        //                 // get error message from body or default to response status
-        //                 const error = (data && data.message) || response.status;
-        //                 return Promise.reject(error);
-        //             } else if (data.sales_client_id != null) {
-        //                 notify("This client is already exist.")
-        //                 return
-        //             } else if (data.id != 0) {
+        if (state.company_entity_name == null || state.company_entity_name == "") {
+            notify("Please enter client name.")
+            return
+        } else if (state.category_name == null || state.category_name == "") {
+            notify("Please enter group name.")
+            return
+        } else {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    item_id: state.item_id,
+                    item_name: state.item_name,
+                    category_id: state.category_id,
+                    company_id: state.company_id,
+                    unit_price: state.unit_price,
+                    unit: state.unit,
+                })
+            };
+            fetch(`${SERVER_URL}updateItem`, requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    console.log("Response Data=============>", data)
+                    // check for error response
+                    if (!response.ok) {
+                        // get error message from body or default to response status
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    } else if (data.category_id == 0) {
+                        notify("This Item is already exist.")
+                        return
+                    } else if (data.category_id != 0) {
 
-        //                 handleNotificationCall("shipped");
-        //             }
+                        handleNotificationCall("shipped");
 
-        //         })
-        //         .catch(error => {
-        //             notify('Something went wrong!\n' + error)
-        //             console.error('There was an error!', error);
-        //         });
-        // }
+                    }
+
+                })
+                .catch(error => {
+                    notify('Something went wrong!\n' + error)
+                    console.error('There was an error!', error);
+                });
+        }
     }
 
     const onCancel = () => {
@@ -248,19 +274,25 @@ function EditItemPage(props) {
                                 <CustomInput req={true} title="Item Name" value={state.item_name}
                                     handleChange={(e) => handleChange(e, 'item_name')} />
                             </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
-                                <CustomInput req={true} title="Company" value={state.company} handleChange={(e) => handleChange(e, 'company')} />
+                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
+                                <CustomCombobox req={true} name="Company Name" items={companies} value={state.company_entity_name}
+                                    handleChange={(e) => handleChange(e, 'company_entity_name')} />
                             </Grid>
 
                         </Grid>
                         <Grid container spacing={1}>
 
-                            <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
+                                <CustomCombobox req={true} name="Category Name" items={state.categoryNameList} value={state.category_name}
+                                    handleChange={(e) => handleChange(e, 'category_name')} />
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
                                 <CustomInput req={true} title="Unit Price" value={state.unit_price}
                                     handleChange={(e) => handleChange(e, 'unit_price')} />
                             </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
-                                <CustomInput req={true} title="Unit" value={state.unit} handleChange={(e) => handleChange(e, 'unit')} />
+                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
+                                <CustomInput req={true} title="Unit" value={state.unit}
+                                    handleChange={(e) => handleChange(e, 'unit')} />
                             </Grid>
 
                         </Grid>
@@ -386,13 +418,11 @@ function EditItemPage(props) {
 }
 
 const mapStateToProps = state => ({
-    userview: state.userview,
-    clientview: state.clientview
+    company: state.company
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    // fetchUserView: fetchUserView,
-    // fetchClientView: fetchClientView
+    fetchCompany: fetchCompany
 }, dispatch)
 
 export default connect(

@@ -12,7 +12,7 @@ import PageTitle from "../../../components/PageTitle/PageTitle";
 import { bindActionCreators } from "redux";
 import { useHistory } from "react-router-dom";
 import { useSelector, connect } from "react-redux";
-// import fetchSalesClientView from "../../services/salesview/SalesClientViewService";
+import fetchPromotion from "../../../services/salesorder/SalesPromotionService";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from '../../../common/config';
@@ -42,11 +42,8 @@ function PromotionPage(props) {
       amount: 560,
     }
   ]);
-  // const salesviewData = useSelector(state => state.salesview);
+  const promotionData = useSelector(state => state.promotion);
 
-
-  //Show notification
-  const notify = (message) => toast(message);
   const getMuiTheme = () => createMuiTheme({
     overrides: {
       MUIDataTableBodyCell: {
@@ -69,8 +66,8 @@ function PromotionPage(props) {
     },
   })
   useEffect(() => {
-    // props.fetchSalesClientView()
-    // setDataSource(salesviewData.salesview);
+    props.fetchPromotion()
+    setDataSource(promotionData.promotion);
   }, [])
 
   const columns = [
@@ -101,6 +98,14 @@ function PromotionPage(props) {
     {
       name: "amount",
       label: "Amount",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: "company_entity_name",
+      label: "Company",
       options: {
         filter: true,
         sort: true,
@@ -248,8 +253,8 @@ function PromotionPage(props) {
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
               title={"Promotion"}
-              data={dataSource}
-              // data={salesviewData.salesview}
+              // data={dataSource}
+              data={promotionData.promotion}
               columns={columns}
               options={options}
             />
@@ -274,11 +279,11 @@ function PromotionPage(props) {
 
 
 const mapStateToProps = state => ({
-  // sales: state.sales
+  promotion: state.promotion
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  // fetchSalesClientView: fetchSalesClientView
+  fetchPromotion: fetchPromotion
 }, dispatch)
 
 export default connect(

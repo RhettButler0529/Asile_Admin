@@ -176,6 +176,7 @@ export default function AddCompany(props) {
                             upload: 0,
                             company_info: []
                         })
+                        window.location.reload()
                     }
 
                 })

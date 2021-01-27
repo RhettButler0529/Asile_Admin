@@ -15,15 +15,8 @@ import CustomCombobox from "../../../components/FormControls/CustomCombobox";
 import * as Icons from "@material-ui/icons";
 import { toast, ToastContainer } from "react-toastify";
 import Notification from "../../../components/Notification/Notification";
-import fetchClientView from "../../../services/clientview/ClientViewService";
-// import fetchUserView from "../../../services/users/UserViewService";
+import fetchCompany from "../../../services/company/CompanyService";
 import { SERVER_URL } from '../../../common/config';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import ListItemText from '@material-ui/core/ListItemText';
-import Select from '@material-ui/core/Select';
-import Checkbox from '@material-ui/core/Checkbox';
 import CustomInput from "../../../components/FormControls/CustomInput";
 
 const positions = [
@@ -52,39 +45,74 @@ function AddItemPage(props) {
     const [errorToastId, setErrorToastId] = useState(null);
     var [notificationsPosition, setNotificationPosition] = useState(2);
     const [dataSource, setDataSource] = useState([]);
-    // const userData = useSelector(state => state.userview);
-    const clientData = useSelector(state => state.clientview);
+    const companyData = useSelector(state => state.company);
 
     // input form datas
     const [state, setState] = useState({
-        client_name: '',
+        company_entity_name: '',
         item_name: "",
-        client_id: '',
+        company_id: '',
+        category_id: '',
+        category_name: '',
         unit_price: '',
-        unit: ''
+        unit: '',
+        companyIDList: localStorage.getItem('company_id').split(', '),
+        categoryList: [],
+        categoryNameList: []
     })
 
     useEffect(() => {
-        props.fetchClientView()
-        // props.fetchUserView();
+        props.fetchCompany();
+        console.log(companyData)
+        setDataSource(companyData.company);
+        getGroup()
     }, [])
 
-    // const [userList, setUserList] = React.useState([]);
-
+    const getGroup = () => {
+        let body = {
+            company_id: localStorage.getItem('company_id')
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        };
+        fetch(`${SERVER_URL}getCategoryByCompanyId`, requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                // check for error response
+                if (!response.ok) {
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                console.log("groupdData--> ", data)
+                let list = []
+                data.map(item => {
+                    list.push(item.category_name)
+                })
+                setState({
+                    ...state,
+                    categoryList: data,
+                    categoryNameList: list
+                })
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    }
     //Show notification
     const notify = (message) => toast(message);
-    const getClientNameList = (original) => {
-        console.log('originall ====> ', original, clientData.clientview)
+    const objArray2Array = (original) => {
+        console.log('originall ====> ', state.companyIDList)
         let tmp = [];
         if (Boolean(original)) {
             if (original.length) {
                 original.map(item => {
-                    let optionData = {
-                        key: item?.client_id,
-                        value: item?.client_entity_name
-                    }
-                    tmp.push(optionData);
+                    if(state.companyIDList.includes(item.company_id.toString()))
+                        tmp.push(item?.company_entity_name);
                 })
+                console.log('Temp==> ', tmp)
                 return tmp;
             }
             return [];
@@ -93,92 +121,71 @@ function AddItemPage(props) {
         }
     }
 
-    const clients = getClientNameList(clientData.clientview)
+    const companies = objArray2Array(companyData.company)
 
-    console.log("Client Data =====> ", clients.map(item => {
-        return item?.value
-    }))
-
-    // const getUserNameList = (original) => {
-    //     console.log('originall ====> ', original, userData.userview)
-    //     let tmp = [];
-    //     if (Boolean(original)) {
-    //         if (original.length) {
-    //             original.map(item => {
-    //                 let optionData = {
-    //                     key: item?.user_id,
-    //                     value: item?.full_name
-    //                 }
-    //                 tmp.push(optionData);
-    //             })
-    //             return tmp;
-    //         }
-    //         return [];
-    //     } else {
-    //         return []
-    //     }
-    // }
-
-    // const users = getUserNameList(userData.userview)
-
-
-    //input fields event
-    const handleChange = (e, field) => {
-
-        if (field == "client_name") {
-            if (clients.filter(item => item.value == e)[0] != null) {
-                setState({
-                    ...state,
-                    client_name: e,
-                    client_id: clients.filter(item => item.value == e)[0].key
-                })
-            }
-
-        } else {
+    const setCompanyIdfromCompanyName = (company_entity_name) => {
+        let object = companyData.company.filter(item => item.company_entity_name == company_entity_name)
+        if (object[0] != null) {
             setState({
                 ...state,
-                [field]: e.target.value,
+                company_id: object[0].company_id.toString()
             })
+        }
+
+    }
+
+    const setGroupIdfromGroupName = (category_name) => {
+        let object = state.categoryList.filter(item => item.category_name == category_name)
+        if (object[0] != null) {
+            console.log("object[0].category_id==>", object[0].category_id)
+            setState({
+                ...state,
+                category_id: object[0].category_id
+            })
+        }
+
+    }
+
+    const handleChange = (e, field) => {
+
+        if (field == 'company_entity_name') {
+            setCompanyIdfromCompanyName(e)
+            setState(prevState => ({
+                ...prevState, [field]: e
+            }))
+        } else if (field == 'category_name') {
+            setGroupIdfromGroupName(e)
+            setState(prevState => ({
+                ...prevState, [field]: e
+            }))
+        } else {
+            const { name, value } = e.target;
+            setState(prevState => ({
+                ...prevState, [field]: value
+            }))
         }
     }
 
-    // const handleNameChange = (event) => {
-
-    //     setUserList(event.target.value)
-    //     const options = event.target.value;
-    //     const value = [];
-    //     for (let i = 0, l = options.length; i < l; i += 1) {
-    //         value.push(getUserIDbyUserName(options[i]))
-    //     }
-    //     setState(prevState => ({
-    //         ...prevState,
-    //         userIDList: value
-    //     }))
-    // };
-
-    // const getUserIDbyUserName = (user_name) => {
-    //     console.log("state.user===>", users)
-    //     let object = userData.userview.filter(item => item.full_name == user_name)
-    //     if (object[0] != null) {
-    //         return object[0].user_id
-    //     }
-
-    // }
-
     const onSaveandNew = () => {
-        if (state.client_name == null || state.client_name == "") {
+        if (state.company_entity_name == null || state.company_entity_name == "") {
             notify("Please enter client name.")
+            return
+        } else if (state.category_name == null || state.category_name == "") {
+            notify("Please enter group name.")
             return
         } else {
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    client_id: state.client_id,
-                    // user_id: state.userIDList,
+                    item_name: state.item_name,
+                    category_id: state.category_id,
+                    company_id: state.company_id,
+                    unit_price: state.unit_price,
+                    unit: state.unit,
                 })
             };
-            fetch(`${SERVER_URL}addSalesClient`, requestOptions)
+            fetch(`${SERVER_URL}createItem`, requestOptions)
                 .then(async response => {
                     const data = await response.json();
                     console.log("Response Data=============>", data)
@@ -187,18 +194,21 @@ function AddItemPage(props) {
                         // get error message from body or default to response status
                         const error = (data && data.message) || response.status;
                         return Promise.reject(error);
-                    } else if (data.sales_client_id != null) {
-                        notify("This client is already exist.")
+                    } else if (data.category_id == 0) {
+                        notify("This Item is already exist.")
                         return
-                    } else if (data.id != 0) {
+                    } else if (data.category_id != 0) {
 
                         handleNotificationCall("shipped");
-                        setState(() => ({
-                            client_name: '',
-                            user_name: "",
-                            client_id: '',
-                            user_id: '',
-                        }))
+                        setState({
+                            ...state,
+                            company_entity_name: '',
+                            item_name: "",
+                            category_id: '',
+                            category_name: '',
+                            unit_price: '',
+                            unit: '',
+                        })
 
                     }
 
@@ -212,19 +222,25 @@ function AddItemPage(props) {
     }
 
     const onSaveandBack = () => {
-        if (state.client_name == null || state.client_name == "") {
+        if (state.company_entity_name == null || state.company_entity_name == "") {
             notify("Please enter client name.")
+            return
+        } else if (state.category_name == null || state.category_name == "") {
+            notify("Please enter group name.")
             return
         } else {
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    client_id: state.client_id,
-                    // user_id: state.userIDList,
+                    item_name: state.item_name,
+                    category_id: state.category_id,
+                    company_id: state.company_id,
+                    unit_price: state.unit_price,
+                    unit: state.unit,
                 })
             };
-            fetch(`${SERVER_URL}addSalesClient`, requestOptions)
+            fetch(`${SERVER_URL}createItem`, requestOptions)
                 .then(async response => {
                     const data = await response.json();
                     console.log("Response Data=============>", data)
@@ -233,20 +249,13 @@ function AddItemPage(props) {
                         // get error message from body or default to response status
                         const error = (data && data.message) || response.status;
                         return Promise.reject(error);
-                    } else if (data.sales_client_id != null) {
-                        notify("This client is already exist.")
+                    } else if (data.category_id == 0) {
+                        notify("This Item is already exist.")
                         return
-                    } else if (data.id != 0) {
+                    } else if (data.category_id != 0) {
 
                         handleNotificationCall("shipped");
-                        setState(() => ({
-                            client_name: '',
-                            user_name: "",
-                            client_id: '',
-                            user_id: '',
-                        }))
-                        history.push("/app/salesview");
-
+                        history.push("/app/salesorder/item");
                     }
 
                 })
@@ -258,13 +267,13 @@ function AddItemPage(props) {
 
     }
 
+    const onAddDiscount = () => {
+        history.push("/app/salesorder/discount/add");
+    }
+
     const onCancel = () => {
         history.push("/app/salesorder/item");
     }
-
-    const clientList = clients.map(item => {
-        return item?.value
-    })
 
     return (
         <>
@@ -302,24 +311,28 @@ function AddItemPage(props) {
                                     handleChange={(e) => handleChange(e, 'item_name')} />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
-                                <CustomCombobox req={true} name="Client Name" items={clientList} value={state.client_name}
-                                    handleChange={(e) => handleChange(e, 'client_name')} />
+                                <CustomCombobox req={true} name="Company Name" items={companies} value={state.company_entity_name}
+                                    handleChange={(e) => handleChange(e, 'company_entity_name')} />
                             </Grid>
                         </Grid>
-                        <Grid container spacing={1}>
-                            <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                        <Grid container spacing={5}>
+                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
+                                <CustomCombobox req={true} name="Category Name" items={state.categoryNameList} value={state.category_name}
+                                    handleChange={(e) => handleChange(e, 'category_name')} />
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
                                 <CustomInput req={true} title="Unit Price" value={state.unit_price}
                                     handleChange={(e) => handleChange(e, 'unit_price')} />
                             </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
                                 <CustomInput req={true} title="Unit" value={state.unit}
                                     handleChange={(e) => handleChange(e, 'unit')} />
                             </Grid>
                         </Grid>
                         <Divider />
                         <Grid container spacing={1}>
-                            <Grid item xs={8} md={8} lg={8}></Grid>
-                            <Grid item xs={4} md={4} lg={4}>
+                            <Grid item xs={6} md={6} lg={6}></Grid>
+                            <Grid item xs={6} md={6} lg={6}>
                                 <Grid container spacing={2} className={classes.buttonContainer}>
                                     <Grid item>
                                         <Button
@@ -341,6 +354,17 @@ function AddItemPage(props) {
                                             onClick={() => onSaveandBack()}
                                         >
                                             Save & Back
+                                        </Button>
+                                    </Grid>
+                                    <Grid item>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            className={classes.button}
+                                            startIcon={<Icons.Add />}
+                                            onClick={() => onAddDiscount()}
+                                        >
+                                            Add Discount
                                         </Button>
                                     </Grid>
 
@@ -439,13 +463,11 @@ function AddItemPage(props) {
 }
 
 const mapStateToProps = state => ({
-    // userview: state.userview,
-    clientview: state.clientview
+    company: state.company
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    // fetchUserView: fetchUserView,
-    fetchClientView: fetchClientView
+    fetchCompany: fetchCompany
 }, dispatch)
 
 export default connect(

@@ -8,7 +8,7 @@ import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import { LayoutProvider } from "./context/LayoutContext";
 import { UserProvider } from "./context/UserContext";
-import { createStore, applyMiddleware } from "redux";
+import { createStore, applyMiddleware, compose  } from "redux";
 import rootReducer from "./redux/reducers";
 import { Provider } from "react-redux";
 import thunkMiddleware from 'redux-thunk'
@@ -18,10 +18,12 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 // pick a date util library
 import DateFnsUtils from '@date-io/date-fns';
 
-const store = createStore(rootReducer,
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(rootReducer,composeEnhancers (
   applyMiddleware(
     thunkMiddleware,
   )
+)
 )
 
 ReactDOM.render(

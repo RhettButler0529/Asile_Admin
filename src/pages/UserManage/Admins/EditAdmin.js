@@ -258,9 +258,6 @@ function EditAdmin(props) {
     } else if (state.companyIDList == []) {
       notify("Please enter company name.")
       return
-    } else if (state.sales_target == 0) {
-      notify("Please enter sales_target.")
-      return
     } else {
       updateAdminInfo(update_id)
       // history.push("/app/usermanage/admin");

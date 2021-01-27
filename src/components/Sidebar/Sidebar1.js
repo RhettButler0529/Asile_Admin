@@ -47,7 +47,7 @@ import {
 } from "../../context/LayoutContext";
 import { Typography } from "../Wrappers/Wrappers";
 
-const structure = localStorage.getItem('allow_so') != 0 ?[
+const structure = localStorage.getItem('allow_so') != 0 ? [
   {
     id: 0,
     label: "User",
@@ -72,40 +72,39 @@ const structure = localStorage.getItem('allow_so') != 0 ?[
     link: "/app/salesview",
     icon: <TransferWithinAStationOutlined fontSize="small" />,
   },
-  
-    {
-      id: 5,
-      label: "Sales Order",
-      link: "/app/salesorder/review",
-      icon: <ShoppingCartOutlinedIcon fontSize="small" />,
-      children: [
-        {
-          label: "Review Orders",
-          link: "/app/salesorder/review",
-          icon: <VisibilityOutlinedIcon fontSize="small" />,
-        },
-        {
-          label: "Orders History",
-          link: "/app/salesorder/history",
-          icon: <HistoryOutlinedIcon fontSize="small" />,
-        },
-        {
-          label: "Items Database",
-          link: "/app/salesorder/item",
-          icon: <StorageOutlinedIcon fontSize="small" />,
-        },
-        {
-          label: "Discounts",
-          link: "/app/salesorder/discount",
-          icon: <TrendingDownOutlinedIcon fontSize="small" />,
-        },
-        {
-          label: "Promotions",
-          link: "/app/salesorder/promotion",
-          icon: <SpellcheckOutlinedIcon fontSize="small" />,
-        },
-      ],
-    },
+  {
+    id: 5,
+    label: "Sales Order",
+    link: "/app/salesorder/review",
+    icon: <ShoppingCartOutlinedIcon fontSize="small" />,
+    children: [
+      {
+        label: "Review Orders",
+        link: "/app/salesorder/review",
+        icon: <VisibilityOutlinedIcon fontSize="small" />,
+      },
+      {
+        label: "Orders History",
+        link: "/app/salesorder/history",
+        icon: <HistoryOutlinedIcon fontSize="small" />,
+      },
+      {
+        label: "Items Database",
+        link: "/app/salesorder/item",
+        icon: <StorageOutlinedIcon fontSize="small" />,
+      },
+      {
+        label: "Promotions",
+        link: "/app/salesorder/promotion",
+        icon: <SpellcheckOutlinedIcon fontSize="small" />,
+      },
+      {
+        label: "Categories",
+        link: "/app/salesorder/group",
+        icon: <SpellcheckOutlinedIcon fontSize="small" />,
+      },
+    ],
+  },
   {
     id: 4,
     label: "Report",
@@ -125,49 +124,49 @@ const structure = localStorage.getItem('allow_so') != 0 ?[
   },
 
 ] : [
-  {
-    id: 0,
-    label: "User",
-    link: "/app/userview",
-    icon: <AccountCircleOutlined fontSize="small" />,
-  },
-  {
-    id: 1,
-    label: "Client",
-    link: "/app/clientview",
-    icon: <PeopleAltOutlined fontSize="small" />,
-  },
-  {
-    id: 2,
-    label: "Schedule",
-    link: "/app/scheduleview",
-    icon: <TimerOutlined fontSize="small" />,
-  },
-  {
-    id: 3,
-    label: "Sales Client",
-    link: "/app/salesview",
-    icon: <TransferWithinAStationOutlined fontSize="small" />,
-  },
-  {
-    id: 4,
-    label: "Report",
-    link: "/app/schedule_report",
-    icon: <AssessmentOutlined fontSize="small" />,
-    children: [
-      {
-        label: "Schedules Report",
-        link: "/app/schedule_report",
-        icon: <VisibilityOutlinedIcon fontSize="small" />,
-      },
-      {
-        label: "Sales Order Report",
-        link: "/app/salesorder_report",
-        icon: <HistoryOutlinedIcon fontSize="small" />,
-      }]
-  },
+    {
+      id: 0,
+      label: "User",
+      link: "/app/userview",
+      icon: <AccountCircleOutlined fontSize="small" />,
+    },
+    {
+      id: 1,
+      label: "Client",
+      link: "/app/clientview",
+      icon: <PeopleAltOutlined fontSize="small" />,
+    },
+    {
+      id: 2,
+      label: "Schedule",
+      link: "/app/scheduleview",
+      icon: <TimerOutlined fontSize="small" />,
+    },
+    {
+      id: 3,
+      label: "Sales Client",
+      link: "/app/salesview",
+      icon: <TransferWithinAStationOutlined fontSize="small" />,
+    },
+    {
+      id: 4,
+      label: "Report",
+      link: "/app/schedule_report",
+      icon: <AssessmentOutlined fontSize="small" />,
+      children: [
+        {
+          label: "Schedules Report",
+          link: "/app/schedule_report",
+          icon: <VisibilityOutlinedIcon fontSize="small" />,
+        },
+        {
+          label: "Sales Order Report",
+          link: "/app/salesorder_report",
+          icon: <HistoryOutlinedIcon fontSize="small" />,
+        }]
+    },
 
-];
+  ];
 
 function Sidebar({ location }) {
   var classes = useStyles();
@@ -229,7 +228,7 @@ function Sidebar({ location }) {
           />
         ))}
       </List>
-      <div style={{ justifyContent: 'center', alignSelf: 'center', position: 'absolute', bottom: 10 }}>
+      <div style={{ justifyContent: 'center', alignSelf: 'center', marginTop: 20 }}>
         <IconButton style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}
           onClick={() => {
             localStorage.clear();

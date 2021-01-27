@@ -83,7 +83,9 @@ function AddUser(props) {
         email: "",
         phone_number: '',
         company_id: "",
-        company_entity_name: ""
+        company_entity_name: "",
+        sales_target: 0,
+        allow_so: 0
     })
 
 
@@ -137,6 +139,8 @@ function AddUser(props) {
                     email: state.email,
                     phone_number: state.phone_number,
                     company_id: state.company_id,
+                    sales_target: 0,
+                    allow_so: 0,
                     isAdmin: false,
                     isActive: false
                 })
@@ -197,6 +201,8 @@ function AddUser(props) {
                     email: state.email,
                     phone_number: state.phone_number,
                     company_id: state.company_id,
+                    sales_target: 0,
+                    allow_so: 0,
                     isAdmin: false,
                     isActive: false
                 })

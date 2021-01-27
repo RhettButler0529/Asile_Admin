@@ -299,6 +299,7 @@ function AddSales(props) {
                             client_id: '',
                             user_id: '',
                             company_id: '',
+                            users: []
                         }))
                     }
 
@@ -346,6 +347,7 @@ function AddSales(props) {
                             client_id: '',
                             user_id: '',
                             company_id: '',
+                            users: []
                         }))
                         history.push("/app/sales");
                     }

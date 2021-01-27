@@ -16,8 +16,8 @@ import * as Icons from "@material-ui/icons";
 import { toast, ToastContainer } from "react-toastify";
 import Notification from "../../../components/Notification/Notification";
 import fetchClientView from "../../../services/clientview/ClientViewService";
-// import fetchUserView from "../../../services/users/UserViewService";
 import { SERVER_URL } from '../../../common/config';
+import fetchCompany from "../../../services/company/CompanyService";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -52,43 +52,80 @@ function AddPromotionPage(props) {
     const [errorToastId, setErrorToastId] = useState(null);
     var [notificationsPosition, setNotificationPosition] = useState(2);
     const [dataSource, setDataSource] = useState([]);
-    // const userData = useSelector(state => state.userview);
-    // const clientData = useSelector(state => state.clientview);
+    const companyData = useSelector(state => state.company);
 
     // input form datas
     const [state, setState] = useState({
         code: '',
         typeList: ['PERCENT', 'UNIT', 'TOTAL'],
         type: 'PERCENT',
-        amount: ''
+        amount: '',
+        company_entity_name: '',
+        company_id: '',
+        companyIDList: localStorage.getItem('company_id').split(', '),
     })
-
     useEffect(() => {
-        // props.fetchClientView()
-        // props.fetchUserView();
+        props.fetchCompany();
+        console.log(companyData)
+        setDataSource(companyData.company);
     }, [])
-
-    // const [userList, setUserList] = React.useState([]);
-
     //Show notification
     const notify = (message) => toast(message);
+    const objArray2Array = (original) => {
+        console.log('originall ====> ', state.companyIDList)
+        let tmp = [];
+        if (Boolean(original)) {
+            if (original.length) {
+                original.map(item => {
+                    if (state.companyIDList.includes(item.company_id.toString()))
+                        tmp.push(item?.company_entity_name);
+                })
+                console.log('Temp==> ', tmp)
+                return tmp;
+            }
+            return [];
+        } else {
+            return []
+        }
+    }
+    const companies = objArray2Array(companyData.company)
 
+    const setCompanyIdfromCompanyName = (company_entity_name) => {
+        let object = companyData.company.filter(item => item.company_entity_name == company_entity_name)
+        if (object[0] != null) {
+            setState({
+                ...state,
+                company_id: object[0].company_id.toString()
+            })
+        }
+
+    }
     //input fields event
     const handleChange = (e, field) => {
-        setState({
-            ...state,
-            [field]: e.target.value,
-        })
-        // if (field == "type") {
-        //     if (clients.filter(item => item.value == e)[0] != null) {
-        //         setState({
-        //             ...state,
-        //             client_name: e,
-        //             client_id: clients.filter(item => item.value == e)[0].key
-        //         })
-        //     }
+        if (field == 'company_entity_name') {
+            setCompanyIdfromCompanyName(e)
+            setState(prevState => ({
+                ...prevState, [field]: e
+            }))
+        } else {
+            if (state.type == "PERCENT") {
+                if (Number(e.target.value) > 100) {
+                    notify("This field should smaller than 100.")
+                } else {
+                    setState({
+                        ...state,
+                        [field]: e.target.value,
+                    })
+                }
+            } else {
+                setState({
+                    ...state,
+                    [field]: e.target.value,
+                })
+            }
+        }
 
-        // }
+
     }
 
     const handleTypeChange = (e, field) => {
@@ -103,94 +140,104 @@ function AddPromotionPage(props) {
 
 
     const onSaveandNew = () => {
-        // if (state.code == null || state.code == "") {
-        //     notify("Please enter item name.")
-        //     return
-        // } else {
-        //     const requestOptions = {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({
-        //             client_id: state.client_id,
-        //             // user_id: state.userIDList,
-        //         })
-        //     };
-        //     fetch(`${SERVER_URL}addSalesClient`, requestOptions)
-        //         .then(async response => {
-        //             const data = await response.json();
-        //             console.log("Response Data=============>", data)
-        //             // check for error response
-        //             if (!response.ok) {
-        //                 // get error message from body or default to response status
-        //                 const error = (data && data.message) || response.status;
-        //                 return Promise.reject(error);
-        //             } else if (data.sales_client_id != null) {
-        //                 notify("This client is already exist.")
-        //                 return
-        //             } else if (data.id != 0) {
+        if (state.code == null || state.code == "") {
+            notify("Please enter item name.")
+            return
+        } else if (state.amount == null || state.amount == '') {
+            notify("Please enter amount.")
+            return
+        } else if (state.company_entity_name == null || state.company_entity_name == '') {
+            notify("Please select company.")
+            return
+        } else {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: state.code,
+                    type: state.type,
+                    amount: state.amount,
+                    company_id: state.company_id
+                })
+            };
+            fetch(`${SERVER_URL}createPromotion`, requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    console.log("Response Data=============>", data)
+                    // check for error response
+                    if (!response.ok) {
+                        // get error message from body or default to response status
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    } else if (data.promotion_id == 0) {
+                        notify("This promotion code is already exist.")
+                        return
+                    } else if (data.promotion_id != 0) {
 
-        //                 handleNotificationCall("shipped");
-        //                 setState(() => ({
-        //                     client_name: '',
-        //                     user_name: "",
-        //                     client_id: '',
-        //                     user_id: '',
-        //                 }))
+                        handleNotificationCall("shipped");
+                        setState(() => ({
+                            ...state,
+                            code: '',
+                            amount: "",
+                            company_entity_name: '',
+                            company_id: '',
+                        }))
 
-        //             }
+                    }
 
-        //         })
-        //         .catch(error => {
-        //             notify('Something went wrong!\n' + error)
-        //             console.error('There was an error!', error);
-        //         });
-        // }
+                })
+                .catch(error => {
+                    notify('Something went wrong!\n' + error)
+                    console.error('There was an error!', error);
+                });
+        }
     }
 
     const onSaveandBack = () => {
-        // if (state.code == null || state.code == "") {
-        //     notify("Please enter client name.")
-        //     return
-        // } else {
-        //     const requestOptions = {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({
-        //             client_id: state.client_id,
-        //             // user_id: state.userIDList,
-        //         })
-        //     };
-        //     fetch(`${SERVER_URL}addSalesClient`, requestOptions)
-        //         .then(async response => {
-        //             const data = await response.json();
-        //             console.log("Response Data=============>", data)
-        //             // check for error response
-        //             if (!response.ok) {
-        //                 // get error message from body or default to response status
-        //                 const error = (data && data.message) || response.status;
-        //                 return Promise.reject(error);
-        //             } else if (data.sales_client_id != null) {
-        //                 notify("This client is already exist.")
-        //                 return
-        //             } else if (data.id != 0) {
+        if (state.code == null || state.code == "") {
+            notify("Please enter item name.")
+            return
+        } else if (state.amount == null || state.amount == '') {
+            notify("Please enter amount.")
+            return
+        } else if (state.company_entity_name == null || state.company_entity_name == '') {
+            notify("Please select company.")
+            return
+        } else {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: state.code,
+                    type: state.type,
+                    amount: state.amount,
+                    company_id: state.company_id
+                })
+            };
+            fetch(`${SERVER_URL}createPromotion`, requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    console.log("Response Data=============>", data)
+                    // check for error response
+                    if (!response.ok) {
+                        // get error message from body or default to response status
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    } else if (data.promotion_id == 0) {
+                        notify("This promotion code is already exist.")
+                        return
+                    } else if (data.promotion_id != 0) {
 
-        //                 handleNotificationCall("shipped");
-        //                 setState(() => ({
-        //                     client_name: '',
-        //                     user_name: "",
-        //                     client_id: '',
-        //                     user_id: '',
-        //                 }))
-        //                 history.push("/app/salesview");
+                        handleNotificationCall("shipped");
+                        history.push("/app/salesorder/promotion");
+                    }
 
-        //             }
-
-        //         })
-        //         .catch(error => {
-        //             notify('Something went wrong!\n' + error)
-        //             console.error('There was an error!', error);
-        //         });
-        // }
+                })
+                .catch(error => {
+                    notify('Something went wrong!\n' + error)
+                    console.error('There was an error!', error);
+                });
+        }
 
     }
 
@@ -233,17 +280,21 @@ function AddPromotionPage(props) {
                             </Grid>
                         </Grid>
                         <Grid container spacing={1}>
-                            <Grid item xs={12} sm={4} md={4} lg={4} className={classes.formContainer}>
+                            <Grid item xs={12} sm={3} md={3} lg={3} className={classes.formContainer}>
                                 <CustomInput req={true} title="Code" value={state.code}
                                     handleChange={(e) => handleChange(e, 'code')} />
                             </Grid>
-                            <Grid item xs={12} sm={4} md={4} lg={4} className={classes.formContainer}>
+                            <Grid item xs={12} sm={3} md={3} lg={3} className={classes.formContainer}>
                                 <CustomCombobox req={true} name="Type" items={state.typeList} value={state.type}
                                     handleChange={(e) => handleTypeChange(e, 'type')} />
                             </Grid>
-                            <Grid item xs={12} sm={4} md={4} lg={4} className={classes.formContainer}>
-                                <CustomInput req={true} title={state.type=='TOTAL'?'Amount(Price)':(state.type=="UNIT"?'Amount(units)': 'Amount(%)')} value={state.amount}
+                            <Grid item xs={12} sm={3} md={3} lg={3} className={classes.formContainer}>
+                                <CustomInput req={true} title={state.type == 'TOTAL' ? 'Amount(Price)' : (state.type == "UNIT" ? 'Amount(units)' : 'Amount(%)')} value={state.amount}
                                     handleChange={(e) => handleChange(e, 'amount')} />
+                            </Grid>
+                            <Grid item xs={12} sm={3} md={3} lg={3} className={classes.formContainer}>
+                                <CustomCombobox req={true} name="Company Name" items={companies} value={state.company_entity_name}
+                                    handleChange={(e) => handleChange(e, 'company_entity_name')} />
                             </Grid>
                         </Grid>
                         <Divider />
@@ -369,13 +420,11 @@ function AddPromotionPage(props) {
 }
 
 const mapStateToProps = state => ({
-    // userview: state.userview,
-    clientview: state.clientview
+    company: state.company
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    // fetchUserView: fetchUserView,
-    fetchClientView: fetchClientView
+    fetchCompany: fetchCompany
 }, dispatch)
 
 export default connect(

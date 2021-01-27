@@ -103,7 +103,7 @@ function AddAdmin(props) {
         companyIDList: [],
         company_entity_name: "",
         sales_target: 0,
-        allow_so: false
+        allow_so: 0
     })
     const [companyList, setCompanyList] = React.useState([]);
 
@@ -153,9 +153,6 @@ function AddAdmin(props) {
             return
         } else if (state.companyIDList == []) {
             notify("Please enter company name.")
-            return
-        } else if (state.sales_target == 0) {
-            notify("Please enter sales target.")
             return
         } else {
             const requestOptions = {
@@ -258,7 +255,7 @@ function AddAdmin(props) {
                 email: "",
                 phone_number: '',
                 companyIDList: [],
-                allow_so: false,
+                allow_so: 0,
                 sales_target: 0
             }))
         }
