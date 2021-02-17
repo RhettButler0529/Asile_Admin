@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Input, IconButton, FormControlLabel, Switch, Divider, Button } from "@material-ui/core";
-
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
 // styles
 import "react-toastify/dist/ReactToastify.css";
 import useStyles from "./styles";
@@ -50,29 +51,33 @@ function EditItemPage(props) {
         category_name: '',
         unit_price: '',
         unit: '',
+        tag: '',
         companyIDList: localStorage.getItem('company_id').split(', '),
         categoryList: [],
-        categoryNameList: []
+        categoryNameList: [],
+        unitList: [],
+        showDiscount: false,
+        discount_type: "UNIT",
+        min_qty: '',
+        max_qty: '',
+        amount: '',
+        discountList: []
     })
 
     useEffect(() => {
         props.fetchCompany();
-        console.log(companyData)
-        setDataSource(companyData.company);
+        getUnit()
         getGroup()
         getGroupbyId()
+        getDiscount(update_id)
     }, [])
 
-    const getGroup = () => {
-        let body = {
-            company_id: localStorage.getItem('company_id')
-        }
+    const getUnit = () => {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
         };
-        fetch(`${SERVER_URL}getCategoryByCompanyId`, requestOptions)
+        fetch(`${SERVER_URL}getUnit`, requestOptions)
             .then(async response => {
                 const data = await response.json();
                 // check for error response
@@ -81,16 +86,46 @@ function EditItemPage(props) {
                     const error = (data && data.message) || response.status;
                     return Promise.reject(error);
                 }
-                console.log("groupdData--> ", data)
+                console.log("unitData--> ", data)
+                let list = []
+                data.map(unit => {
+                    list.push(unit.unit_name)
+                })
+                setState((state) => ({
+                    ...state,
+                    unitList: [...list],
+                }))
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    }
+
+    const getGroup = () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        };
+        fetch(`${SERVER_URL}getCategory`, requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                // check for error response
+                if (!response.ok) {
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+
                 let list = []
                 data.map(item => {
                     list.push(item.category_name)
                 })
-                setState({
+                console.log("categoryData--> ", list)
+                setState((state) => ({
                     ...state,
                     categoryList: data,
-                    categoryNameList: list
-                })
+                    categoryNameList: [...list]
+                }))
             })
             .catch(error => {
                 console.error('There was an error!', error);
@@ -116,7 +151,7 @@ function EditItemPage(props) {
                     return Promise.reject(error);
                 }
                 console.log("get Data@--> ", data)
-                setState({
+                setState((state) => ({
                     ...state,
                     company_entity_name: data.company_entity_name,
                     item_name: data.item_name,
@@ -125,7 +160,38 @@ function EditItemPage(props) {
                     category_name: data.category_name,
                     unit_price: data.unit_price,
                     unit: data.unit,
-                })
+                    tag: data.tag
+                }))
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    }
+
+    const getDiscount = (update_id) => {
+        let body = {
+            item_id: update_id
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        };
+        fetch(`${SERVER_URL}getDiscountsbyItemId`, requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                // check for error response
+                if (!response.ok) {
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                console.log("discountList===> ", data)
+                setState((state) => ({
+                    ...state,
+                    discountList: data,
+                    showDiscount: data.length != 0 ? true : false
+                }))
             })
             .catch(error => {
                 console.error('There was an error!', error);
@@ -187,6 +253,14 @@ function EditItemPage(props) {
             setState(prevState => ({
                 ...prevState, [field]: e
             }))
+        } else if (field == 'unit') {
+            setState(prevState => ({
+                ...prevState, [field]: e
+            }))
+        } else if (field == "discount_type") {
+            setState(prevState => ({
+                ...prevState, [field]: e
+            }))
         } else {
             const { name, value } = e.target;
             setState(prevState => ({
@@ -213,6 +287,7 @@ function EditItemPage(props) {
                     company_id: state.company_id,
                     unit_price: state.unit_price,
                     unit: state.unit,
+                    tag: state.tag
                 })
             };
             fetch(`${SERVER_URL}updateItem`, requestOptions)
@@ -241,18 +316,103 @@ function EditItemPage(props) {
         }
     }
 
+    const onAddDiscount = () => {
+        if (state.min_qty == "") {
+            notify("Please enter min quantity.")
+        } else if (state.max_qty == "") {
+            notify("Please enter max quantity.")
+        } else if (state.amount == "") {
+            notify("Please enter amount")
+        } else {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    item_id: state.item_id,
+                    amount: state.amount,
+                    min_quantity: state.min_qty,
+                    max_quantity: state.max_qty,
+                    type: state.discount_type
+                })
+            };
+            fetch(`${SERVER_URL}createDiscount`, requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    console.log("Response Data=============>", data)
+                    // check for error response
+                    if (!response.ok) {
+                        // get error message from body or default to response status
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    } else if (data.discount_id == 0) {
+                        notify("This discount is already exist.")
+                        return
+                    } else if (data.discount_id != 0) {
+
+                        handleNotificationCall("shipped");
+                        let list = state.discountList
+                        list.push({
+                            item_id: state.item_id,
+                            amount: state.amount,
+                            min_quantity: state.min_qty,
+                            max_quantity: state.max_qty,
+                            type: state.discount_type,
+                            discount_id: data.discount_id
+                        })
+                        setState((state) => ({
+                            ...state,
+                            min_qty: '',
+                            max_qty: '',
+                            amount: '',
+                            discountList: list
+                        }))
+                    }
+
+                })
+                .catch(error => {
+                    notify('Something went wrong!\n' + error)
+                    console.error('There was an error!', error);
+                });
+        }
+    }
+
+    const onDelete = (discount_id) => {
+        console.log("Discount ID ==> ", discount_id)
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                discount_id: discount_id
+            })
+        };
+        fetch(`${SERVER_URL}removeDiscount`, requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                console.log("Response Data=============>", data)
+                // check for error response
+                if (!response.ok) {
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                let list = state.discountList
+                list = list.filter(item => {
+                    return item.discount_id != discount_id
+                })
+                setState((state) => ({
+                    ...state,
+                    discountList: list
+                }))
+            })
+            .catch(error => {
+                notify('Something went wrong!\n' + error)
+                console.error('There was an error!', error);
+            });
+    }
+
     const onCancel = () => {
         history.push("/app/salesorder/item");
     }
-
-
-    // const userList = users.map(item => {
-    //     return item?.value
-    // })
-
-    // const clientList = clients.map(item => {
-    //     return item?.value
-    // })
 
     return (
         <>
@@ -270,7 +430,7 @@ function EditItemPage(props) {
                     <Widget title="" disableWidgetMenu>
                         <Grid container spacing={1}>
 
-                            <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
                                 <CustomInput req={true} title="Item Name" value={state.item_name}
                                     handleChange={(e) => handleChange(e, 'item_name')} />
                             </Grid>
@@ -278,23 +438,26 @@ function EditItemPage(props) {
                                 <CustomCombobox req={true} name="Company Name" items={companies} value={state.company_entity_name}
                                     handleChange={(e) => handleChange(e, 'company_entity_name')} />
                             </Grid>
-
-                        </Grid>
-                        <Grid container spacing={1}>
-
                             <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
                                 <CustomCombobox req={true} name="Category Name" items={state.categoryNameList} value={state.category_name}
                                     handleChange={(e) => handleChange(e, 'category_name')} />
                             </Grid>
+                        </Grid>
+                        <Grid container spacing={1}>
+
+
                             <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
                                 <CustomInput req={true} title="Unit Price" value={state.unit_price}
                                     handleChange={(e) => handleChange(e, 'unit_price')} />
                             </Grid>
                             <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
-                                <CustomInput req={true} title="Unit" value={state.unit}
+                                <CustomCombobox req={true} name="Unit" items={state.unitList} value={state.unit}
                                     handleChange={(e) => handleChange(e, 'unit')} />
                             </Grid>
-
+                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
+                                <CustomInput req={true} title="Tag" value={state.tag}
+                                    handleChange={(e) => handleChange(e, 'tag')} />
+                            </Grid>
                         </Grid>
 
                         <Divider />
@@ -327,6 +490,85 @@ function EditItemPage(props) {
                                 </Grid>
                             </Grid>
                         </Grid>
+                        {
+                            state.discountList.length != 0 ? <>
+                                {
+                                    state.discountList.map(item => {
+                                        return (
+                                            <Grid container spacing={1}>
+                                                <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                                    <CustomInput disabled={true} title="Discount Type" value={item.type} />
+                                                </Grid>
+                                                <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                                    <CustomInput disabled={true} title="Min QTY" value={item.min_quantity} />
+                                                </Grid>
+                                                <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                                    <CustomInput disabled={true} title="Max QTY" value={item.max_quantity} />
+                                                </Grid>
+                                                {
+                                                    item.type == "UNIT" ? <>
+                                                        <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                                            <CustomInput disabled={true} title="Free Unit" value={item.amount} />
+                                                        </Grid>
+                                                    </> : <>
+                                                            <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                                                <CustomInput disabled={true} title="Percentage" value={item.amount} />
+                                                            </Grid>
+                                                        </>
+                                                }
+                                                <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                                    <IconButton aria-label="delete" className={classes.margin} onClick={() => onDelete(item.discount_id)}>
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Grid>
+                                            </Grid>
+                                        )
+
+                                    })
+                                }
+                            </> : null
+                        }
+
+                        {
+                            state.showDiscount ? <>
+                                <Divider />
+                                <Grid container spacing={5}>
+                                    <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                        <CustomCombobox req={true} name="Discount Type" items={["UNIT", "PERCENT"]} value={state.discount_type}
+                                            handleChange={(e) => handleChange(e, 'discount_type')} />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                        <CustomInput req={true} title="Min QTY" value={state.min_qty}
+                                            handleChange={(e) => handleChange(e, 'min_qty')} />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                        <CustomInput req={true} title="Max QTY" value={state.max_qty}
+                                            handleChange={(e) => handleChange(e, 'max_qty')} />
+                                    </Grid>
+                                    {
+                                        state.discount_type == "UNIT" ? <>
+
+                                            <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                                <CustomInput req={true} title="Free Unit" value={state.amount}
+                                                    handleChange={(e) => handleChange(e, 'amount')} />
+                                            </Grid>
+                                        </> : <>
+
+                                                <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                                    <CustomInput req={true} title="Percentage" value={state.amount}
+                                                        handleChange={(e) => handleChange(e, 'amount')} />
+                                                </Grid>
+                                            </>
+                                    }
+                                    <Grid item xs={12} sm={6} md={6} lg={2} className={classes.formContainer}>
+                                        <IconButton aria-label="delete" className={classes.margin} onClick={() => onAddDiscount()}>
+                                            <AddIcon />
+                                        </IconButton>
+                                    </Grid>
+                                </Grid>
+                            </>
+                                : null
+                        }
                     </Widget>
                 </Grid>
             </Grid>

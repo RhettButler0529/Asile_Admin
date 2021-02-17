@@ -3,6 +3,7 @@ import { Grid, IconButton, Tooltip, Menu, MenuItem } from "@material-ui/core";
 import MUIDataTable from "mui-datatables";
 import MenuIcon from '@material-ui/icons/Menu';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 // styles
 import useStyles from "./styles";
 
@@ -58,71 +59,15 @@ function ReviewPage(props) {
   })
   const columns = [
     {
-      name: "order_id",
-      label: "ID",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "full_name",
-      label: "User",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "client_entity_name",
-      label: "Client",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "order_items",
-      label: "Items",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "promotions",
-      label: "Promotion",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "tax",
-      label: "Tax",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "shipping_cost",
-      label: "Shipping Cost",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "net_total",
-      label: "Total",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
       name: "order_date",
+      label: "Order Date",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: "due_date",
       label: "Due Date",
       options: {
         filter: true,
@@ -130,74 +75,138 @@ function ReviewPage(props) {
       }
     },
     {
-      name: "notes",
-      label: "Notes",
+      name: "full_name",
+      label: "Sales Name",
       options: {
         filter: true,
         sort: true,
       }
     },
     {
-      name: "client_signature",
-      label: "Client Signature",
+      name: "client_entity_name",
+      label: "Client Name",
       options: {
         filter: true,
         sort: true,
-        customBodyRender: (value, tableMeta, updateValue) => {
-          console.log(value)
-          return (
-            <a href={`${SERVER_URL}signature/${value}`} target="_blank"> {value} </a>
-          );
-        }
       }
     },
+    // {
+    //   name: "order_items",
+    //   label: "Items",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //   }
+    // },
+    // {
+    //   name: "promotions",
+    //   label: "Promotion",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //   }
+    // },
+    // {
+    //   name: "tax",
+    //   label: "Tax",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //   }
+    // },
+    // {
+    //   name: "shipping_cost",
+    //   label: "Shipping Cost",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //   }
+    // },
     {
-      name: "user_signature",
-      label: "User Signature",
-      options: {
-        filter: true,
-        sort: true,
-        customBodyRender: (value, tableMeta, updateValue) => {
-          console.log(value)
-          return (
-            <a href={`${SERVER_URL}signature/${value}`} target="_blank"> {value} </a>
-          );
-        }
-      }
-    },
-    {
-      name: "upload_picture",
-      label: "Uploaded Picture",
-      options: {
-        filter: true,
-        sort: true,
-        customBodyRender: (value, tableMeta, updateValue) => {
-          console.log(value)
-          return (
-            <a href={`${SERVER_URL}upload/${value}`} target="_blank"> {value} </a>
-          );
-        }
-      }
-    },
-    {
-      name: "custom_field",
-      label: "Custom Field",
+      name: "net_total",
+      label: "Total Amount",
       options: {
         filter: true,
         sort: true,
       }
     },
     {
-      name: "location",
-      label: "Location",
+      name: "company_entity_name",
+      label: "Area",
       options: {
         filter: true,
         sort: true,
       }
     },
+    // {
+    //   name: "notes",
+    //   label: "Notes",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //   }
+    // },
+    // {
+    //   name: "client_signature",
+    //   label: "Client Signature",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //     customBodyRender: (value, tableMeta, updateValue) => {
+    //       console.log(value)
+    //       return (
+    //         <a href={`${SERVER_URL}signature/${value}`} target="_blank"> {value} </a>
+    //       );
+    //     }
+    //   }
+    // },
+    // {
+    //   name: "user_signature",
+    //   label: "User Signature",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //     customBodyRender: (value, tableMeta, updateValue) => {
+    //       console.log(value)
+    //       return (
+    //         <a href={`${SERVER_URL}signature/${value}`} target="_blank"> {value} </a>
+    //       );
+    //     }
+    //   }
+    // },
+    // {
+    //   name: "upload_picture",
+    //   label: "Uploaded Picture",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //     customBodyRender: (value, tableMeta, updateValue) => {
+    //       console.log(value)
+    //       return (
+    //         <a href={`${SERVER_URL}upload/${value}`} target="_blank"> {value} </a>
+    //       );
+    //     }
+    //   }
+    // },
+    // {
+    //   name: "custom_field",
+    //   label: "Custom Field",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //   }
+    // },
+    // {
+    //   name: "location",
+    //   label: "Location",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //   }
+    // },
     {
       name: "status",
-      label: "Status",
+      label: "Order Status",
       options: {
         filter: true,
         sort: true,
@@ -210,31 +219,53 @@ function ReviewPage(props) {
         }
       }
     },
+    // {
+    //   name: "order_method",
+    //   label: "Order Method",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //     customBodyRender: (value, tableMeta, updateValue) => {
+    //       return (
+    //         <Status2 status={
+    //           value
+    //         } />
+    //       );
+    //     }
+    //   }
+    // },
     {
-      name: "order_method",
-      label: "Order Method",
+      name: "order_id",
+      label: "View Details",
       options: {
-        filter: true,
-        sort: true,
-        customBodyRender: (value, tableMeta, updateValue) => {
+        filter: false,
+        sort: false,
+        customBodyRender: (value) => {
+          // console.log("==================>", value, tableMeta, updateValue)
           return (
-            <Status2 status={
-              value
-            } />
+            <>
+              <IconButton
+                // onClick={(e) => {
+                //   actionView(e, value)
+                // }}
+              >
+                <VisibilityIcon style={{ fontSize: '20' }} />
+              </IconButton>
+            </>
           );
         }
-      }
+      },
     },
     {
       name: "order_id",
-      label: "Action",
+      label: "Accept/Reject",
       options: {
         filter: false,
         sort: false,
         customBodyRender: (value) => {
           return (
             <>
-              <Tooltip title="Action">
+              <Tooltip title="Accept/Reject">
                 <IconButton
                   onClick={(e) => {
                     actionClick(e, value)
@@ -302,7 +333,7 @@ function ReviewPage(props) {
     filterType: 'dropdown',
     pagination: true,
     print: false,
-    download: true,
+    download: false,
     filter: true,
     responsive: 'scroll',
     fixedHeader: false, elevation: 0,

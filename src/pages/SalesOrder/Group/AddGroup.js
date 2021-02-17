@@ -49,9 +49,6 @@ function AddGroupPage(props) {
     // input form datas
     const [state, setState] = useState({
         category_name: '',
-        sales_target: 0,
-        company_id: '',
-        company_entity_name: '',
     })
 
     useEffect(() => {
@@ -65,48 +62,48 @@ function AddGroupPage(props) {
 
     const handleChange = (e, field) => {
 
-        let comboFields = ['company_entity_name'];
-        if (comboFields.includes(field)) {
-            setCompanyIdfromCompanyName(e)
-            setState(prevState => ({
-                ...prevState, [field]: e
-            }))
-        } else {
-            const { name, value } = e.target;
-            setState(prevState => ({
-                ...prevState, [field]: value
-            }))
-        }
+        // let comboFields = ['company_entity_name'];
+        // if (comboFields.includes(field)) {
+        //     setCompanyIdfromCompanyName(e)
+        //     setState(prevState => ({
+        //         ...prevState, [field]: e
+        //     }))
+        // } else {
+        const { name, value } = e.target;
+        setState(prevState => ({
+            ...prevState, [field]: value
+        }))
+        // }
     }
 
-    const objArray2Array = (original) => {
-        console.log('originall ====> ', original, companyData.data)
-        let tmp = [];
-        if (Boolean(original)) {
-            if (original.length) {
-                original.map(item => {
-                    tmp.push(item?.company_entity_name);
-                })
-                return tmp;
-            }
-            return [];
-        } else {
-            return []
-        }
-    }
+    // const objArray2Array = (original) => {
+    //     console.log('originall ====> ', original, companyData.data)
+    //     let tmp = [];
+    //     if (Boolean(original)) {
+    //         if (original.length) {
+    //             original.map(item => {
+    //                 tmp.push(item?.company_entity_name);
+    //             })
+    //             return tmp;
+    //         }
+    //         return [];
+    //     } else {
+    //         return []
+    //     }
+    // }
 
-    const companies = objArray2Array(companyData.company)
+    // const companies = objArray2Array(companyData.company)
 
-    const setCompanyIdfromCompanyName = (company_entity_name) => {
-        let object = companyData.company.filter(item => item.company_entity_name == company_entity_name)
-        if (object[0] != null) {
-            setState({
-                ...state,
-                company_id: object[0].company_id.toString()
-            })
-        }
+    // const setCompanyIdfromCompanyName = (company_entity_name) => {
+    //     let object = companyData.company.filter(item => item.company_entity_name == company_entity_name)
+    //     if (object[0] != null) {
+    //         setState({
+    //             ...state,
+    //             company_id: object[0].company_id.toString()
+    //         })
+    //     }
 
-    }
+    // }
 
     const onSaveandNew = () => {
         if (state.category_name == null || state.category_name == "") {
@@ -121,8 +118,8 @@ function AddGroupPage(props) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     category_name: state.category_name,
-                    sales_target: state.sales_target,
-                    company_id: state.company_id
+                    // sales_target: state.sales_target,
+                    // company_id: state.company_id
                 })
             };
             fetch(`${SERVER_URL}createCategory`, requestOptions)
@@ -141,8 +138,8 @@ function AddGroupPage(props) {
                         handleNotificationCall("shipped");
                         setState(() => ({
                             category_name: '',
-                            sales_target: 0,
-                            company_id: ''
+                            // sales_target: 0,
+                            // company_id: ''
                         }))
                     }
                 })
@@ -164,8 +161,8 @@ function AddGroupPage(props) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     category_name: state.category_name,
-                    sales_target: state.sales_target,
-                    company_id: state.company_id
+                    // sales_target: state.sales_target,
+                    // company_id: state.company_id
                 })
             };
             fetch(`${SERVER_URL}createCategory`, requestOptions)
@@ -215,79 +212,59 @@ function AddGroupPage(props) {
                 <Grid item xs={12} md={12}>
                     <Widget title="" disableWidgetMenu>
 
-                        <Grid container spacing={1}>
-                            <Grid item xs={12} md={6} lg={8}></Grid>
-                            <Grid item xs={12} md={6} lg={4}>
-                                <Grid container spacing={2} className={classes.buttonContainer}>
-                                    <Grid item>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            className={classes.button}
-                                            startIcon={<Icons.Cancel />}
-                                            onClick={() => onCancel()}
-                                        >
-                                            Cancel
-                                        </Button>
-                                    </Grid>
-
-                                </Grid>
-
-                            </Grid>
-
-                        </Grid>
-
-                        <Grid container spacing={1}>
-                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={4} md={4} lg={4} className={classes.formContainer}>
                                 <CustomInput req={true} title="Categroy Name" value={state.category_name}
                                     handleChange={(e) => handleChange(e, 'category_name')} />
                             </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
-                                <CustomInput req={true} title="Sales Target" value={state.sales_target}
-                                    handleChange={(e) => handleChange(e, 'sales_target')} />
+                            <Grid item xs={12} sm={2} md={2} lg={2} className={classes.formContainer}>
                             </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
-                                <CustomCombobox req={true} name="Company Name" items={companies} value={state.company_entity_name}
-                                    handleChange={(e) => handleChange(e, 'company_entity_name')} />
+                            <Grid item xs={12} sm={2} md={2} lg={2} className={classes.formContainer}>
+                                <Grid item>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.button}
+                                        startIcon={<Icons.Save />}
+                                        onClick={() => onSaveandNew()}
+                                    >
+                                        Save & New
+                                        </Button>
+                                </Grid>
                             </Grid>
-
-                        </Grid>
-                        <Divider />
-                        <Grid container spacing={1}>
-                            <Grid item xs={12} md={6} lg={8}></Grid>
-                            <Grid item xs={12} md={6} lg={4}>
-                                <Grid container spacing={2} className={classes.buttonContainer}>
-                                    <Grid item>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            className={classes.button}
-                                            startIcon={<Icons.Save />}
-                                            onClick={() => onSaveandNew()}
-                                        >
-                                            Save & New
+                            <Grid item xs={12} sm={2} md={2} lg={2} className={classes.formContainer}>
+                                <Grid item>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.button}
+                                        startIcon={<Icons.Save />}
+                                        onClick={() => onSaveandBack()}
+                                    >
+                                        Save & Back
                                         </Button>
-                                    </Grid>
-                                    <Grid item>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            className={classes.button}
-                                            startIcon={<Icons.Save />}
-                                            onClick={() => onSaveandBack()}
-                                        >
-                                            Save & Back
-                                        </Button>
-                                    </Grid>
-
                                 </Grid>
 
+                            </Grid>
+                            <Grid item xs={12} sm={2} md={2} lg={2} className={classes.formContainer}>
+                                <Grid item>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        className={classes.button}
+                                        startIcon={<Icons.Cancel />}
+                                        onClick={() => onCancel()}
+                                    >
+                                        Cancel
+                                        </Button>
+                                </Grid>
                             </Grid>
 
                         </Grid>
 
                     </Widget>
                 </Grid>
+            
             </Grid>
         </>
     );

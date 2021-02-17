@@ -52,7 +52,7 @@ function AddClient(props) {
         }
     }
 
-    // input form datas
+    // input form data
     const [state, setState] = useState({
         id: '',
         entity_name: '',
@@ -250,9 +250,7 @@ function AddClient(props) {
                 .then(async response => {
                     const data = await response.json();
                     console.log("Response Data=============>", data)
-                    // check for error response
                     if (!response.ok) {
-                        // get error message from body or default to response status
                         const error = (data && data.message) || response.status;
                         return Promise.reject(error);
                     } else if (data.client_id != null) {

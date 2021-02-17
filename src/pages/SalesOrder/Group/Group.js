@@ -56,14 +56,6 @@ function GroupPage(props) {
 
   const columns = [
     {
-      name: "category_id",
-      label: "ID",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
       name: "category_name",
       label: "Category Name",
       options: {
@@ -72,24 +64,8 @@ function GroupPage(props) {
       }
     },
     {
-      name: "sales_target",
-      label: "Sales Target",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "company_entity_name",
-      label: "Company Name",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
       name: "category_id",
-      label: "Action",
+      label: "Edit",
       options: {
         filter: false,
         sort: false,
@@ -128,7 +104,7 @@ function GroupPage(props) {
     filterType: 'dropdown',
     pagination: true,
     print: false,
-    download: true,
+    download: false,
     filter: true,
     responsive: 'scroll',
     fixedHeader: false, elevation: 0,

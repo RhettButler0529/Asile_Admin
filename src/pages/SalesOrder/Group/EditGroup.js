@@ -51,15 +51,9 @@ function EditGroupPage(props) {
     const [state, setState] = useState({
         category_id: update_id,
         category_name: '',
-        sales_target: 0,
-        company_id: 0,
-        company_entity_name: ''
     })
 
     useEffect(() => {
-        props.fetchCompany();
-        console.log(companyData)
-        setDataSource(companyData.data);
         getGroup(update_id)
     }, [])
 
@@ -82,9 +76,6 @@ function EditGroupPage(props) {
                 }
                 setState(() => ({
                     category_name: data[0].category_name,
-                    sales_target: data[0].sales_target,
-                    company_entity_name: data[0].company_entity_name,
-                    company_id: data[0].company_id
                 }))
             })
             .catch(error => {
@@ -95,49 +86,12 @@ function EditGroupPage(props) {
     //Show notification
     const notify = (message) => toast(message);
 
-    const objArray2Array = (original) => {
-        console.log('originall ====> ', original, companyData.data)
-        let tmp = [];
-        if (Boolean(original)) {
-            if (original.length) {
-                original.map(item => {
-                    tmp.push(item?.company_entity_name);
-                })
-                return tmp;
-            }
-            return [];
-        } else {
-            return []
-        }
-    }
-
-    const companies = objArray2Array(companyData.company)
-
-    const setCompanyIdfromCompanyName = (company_entity_name) => {
-        let object = companyData.company.filter(item => item.company_entity_name == company_entity_name)
-        if (object[0] != null) {
-            setState({
-                ...state,
-                company_id: object[0].company_id.toString()
-            })
-        }
-
-    }
-
     const handleChange = (e, field) => {
 
-        let comboFields = ['company_entity_name'];
-        if (comboFields.includes(field)) {
-            setCompanyIdfromCompanyName(e)
-            setState(prevState => ({
-                ...prevState, [field]: e
-            }))
-        } else {
-            const { name, value } = e.target;
-            setState(prevState => ({
-                ...prevState, [field]: value
-            }))
-        }
+        const { name, value } = e.target;
+        setState(prevState => ({
+            ...prevState, [field]: value
+        }))
     }
 
     const onSave = () => {
@@ -151,12 +105,10 @@ function EditGroupPage(props) {
                 body: JSON.stringify({
                     category_id: update_id,
                     category_name: state.category_name,
-                    sales_target: state.sales_target,
-                    company_id: state.company_id
                 })
-                
+
             };
-            console.log("boddy===> ", requestOptions.body)
+            console.log("body===> ", requestOptions.body)
             fetch(`${SERVER_URL}updateCategory`, requestOptions)
                 .then(async response => {
                     const data = await response.json();
@@ -171,7 +123,6 @@ function EditGroupPage(props) {
                         return
                     } else if (data.category_id != 0) {
                         handleNotificationCall("shipped");
-
                     }
                 })
                 .catch(error => {
@@ -200,25 +151,16 @@ function EditGroupPage(props) {
                 />
                 <Grid item xs={12} md={12}>
                     <Widget title="" disableWidgetMenu>
-                        <Grid container spacing={1}>
-                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
+
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={4} md={4} lg={4} className={classes.formContainer}>
                                 <CustomInput req={true} title="Categroy Name" value={state.category_name}
                                     handleChange={(e) => handleChange(e, 'category_name')} />
                             </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
-                                <CustomInput req={true} title="Sales Target" value={state.sales_target}
-                                    handleChange={(e) => handleChange(e, 'sales_target')} />
+                            <Grid item xs={12} sm={2} md={2} lg={2} className={classes.formContainer}>
                             </Grid>
-                            <Grid item xs={12} sm={6} md={6} lg={4} className={classes.formContainer}>
-                                <CustomCombobox req={true} name="Company Name" items={companies} value={state.company_entity_name}
-                                    handleChange={(e) => handleChange(e, 'company_entity_name')} />
-                            </Grid>
-                           
-                        </Grid>
-                        <Divider />
-                        <Grid container spacing={1}>
-                            <Grid item xs={8} md={8} lg={8}></Grid>
-                            <Grid item xs={4} md={4} lg={4}>
+
+                            <Grid item xs={6} md={6} lg={6}>
                                 <Grid container spacing={2} className={classes.buttonContainer}>
                                     <Grid item>
                                         <Button
@@ -246,12 +188,11 @@ function EditGroupPage(props) {
                                 </Grid>
 
                             </Grid>
-
-
                         </Grid>
 
                     </Widget>
                 </Grid>
+
             </Grid>
         </>
     );

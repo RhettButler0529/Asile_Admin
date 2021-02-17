@@ -92,14 +92,6 @@ function HistoryPage(props) {
   })
   const columns = [
     {
-      name: "order_id",
-      label: "ID",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
       name: "full_name",
       label: "User",
       options: {

@@ -14,4 +14,5 @@ export * from './SalesOrderHistoryType';
 export * from './SalesOrderItemType';
 export * from './SalesDiscountType';
 export * from './SalesPromotionType';
+export * from './SalesCouponType';
 export * from './SalesGroupType';

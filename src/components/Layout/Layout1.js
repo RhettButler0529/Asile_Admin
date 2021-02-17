@@ -30,7 +30,7 @@ import SalesViewPage from "../../pages/SalesView/Sales";
 import EditSalesPage from "../../pages/SalesView/EditSales";
 import AddSalesPage from "../../pages/SalesView/AddSales";
 import ScheduleReportPage from '../../pages/Report/ScheduleReport/ScheduleReport'
-import SalesOrderReportPage from '../../pages/Report/SalesOrderReport/SalesOrderReport'
+// import SalesOrderReportPage from '../../pages/Report/SalesOrderReport/SalesOrderReport'
 import ReviewPage from '../../pages/SalesOrder/Review'
 import HistoryPage from '../../pages/SalesOrder/History'
 import ItemPage from '../../pages/SalesOrder/Item/Item'
@@ -42,10 +42,15 @@ import EditDiscountPage from '../../pages/SalesOrder/Discount/EditDiscount'
 import PromotionPage from '../../pages/SalesOrder/Promotion/Promotion'
 import AddPromotionPage from '../../pages/SalesOrder/Promotion/AddPromotion'
 import EditPromotionPage from '../../pages/SalesOrder/Promotion/EditPromotion'
+import AddCouponPage from '../../pages/SalesOrder/Promotion/AddCoupon'
+import EditCouponPage from '../../pages/SalesOrder/Promotion/EditCoupon'
 import TargetPage from '../../pages/SalesOrder/Target/Target'
 import GroupPage from '../../pages/SalesOrder/Group/Group'
 import AddGroupPage from '../../pages/SalesOrder/Group/AddGroup'
 import EditGroupPage from '../../pages/SalesOrder/Group/EditGroup'
+import ItemCategoryPage from '../../pages/SalesOrder/ItemCategory/ItemCategory'
+import EditItemCategoryPage from '../../pages/SalesOrder/ItemCategory/EditItemCategory'
+import CompanyUsersPage from '../../pages/SalesOrder/CompanyUsers/CompanyUsers'
 import SettingPage from '../../pages/Setting/Setting'
 // import EditItemPage from '../../pages/SalesOrder/Item/EditItem'
 import Footer from "../Footer/Footer";
@@ -104,11 +109,15 @@ function Layout(props) {
                 <Route exact path="/app/salesorder/promotion" component={PromotionPage} />
                 <Route exact path="/app/salesorder/promotion/add" component={AddPromotionPage} />
                 <Route exact path="/app/salesorder/promotion/:promotion/edit" component={EditPromotionPage} />
+                <Route exact path="/app/salesorder/coupon/add" component={AddCouponPage} />
+                <Route exact path="/app/salesorder/coupon/:coupon/edit" component={EditCouponPage} />
                 <Route exact path="/app/salesorder/setting" component={SettingPage} />
                 <Route exact path="/app/salesorder/group" component={GroupPage} />
                 <Route exact path="/app/salesorder/group/add" component={AddGroupPage} />
                 <Route exact path="/app/salesorder/group/:group/edit" component={EditGroupPage} />
-                {/* <Route exact path="/app/salesorder/item/:salesorder_item/edit" component={EditItemPage} /> */}
+                <Route exact path="/app/salesorder/itemcategory" component={ItemCategoryPage} />
+                <Route exact path="/app/salesorder/itemcategory/:itemcategory/edit" component={EditItemCategoryPage} />
+                <Route exact path="/app/salesorder/companyusers" component={CompanyUsersPage} />
                 <Route component={Error} />
               </Switch>
             </Grid>

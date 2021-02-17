@@ -13,6 +13,7 @@ import { bindActionCreators } from "redux";
 import { useHistory } from "react-router-dom";
 import { useSelector, connect } from "react-redux";
 import fetchPromotion from "../../../services/salesorder/SalesPromotionService";
+import fetchCoupon from "../../../services/salesorder/SalesCouponService";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from '../../../common/config';
@@ -43,6 +44,7 @@ function PromotionPage(props) {
     }
   ]);
   const promotionData = useSelector(state => state.promotion);
+  const couponData = useSelector(state => state.coupon);
 
   const getMuiTheme = () => createMuiTheme({
     overrides: {
@@ -68,17 +70,60 @@ function PromotionPage(props) {
   useEffect(() => {
     props.fetchPromotion()
     setDataSource(promotionData.promotion);
+    props.fetchCoupon()
+    
   }, [])
 
   const columns = [
     {
-      name: "promotion_id",
-      label: "ID",
+      name: "type",
+      label: "Type",
       options: {
         filter: true,
         sort: true,
       }
     },
+    {
+      name: "amount",
+      label: "Amount",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: "client_entity_name",
+      label: "Client",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: "promotion_id",
+      label: "Edit",
+      options: {
+        filter: false,
+        sort: false,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          // console.log("==================>", value, tableMeta, updateValue)
+          return (
+            <>
+              <IconButton
+                onClick={(e) => {
+                  actionEdit(e, value)
+                }}
+              >
+                <Edit style={{ fontSize: '18' }} />
+              </IconButton>
+            </>
+          );
+        }
+      },
+    },
+  ];
+
+  const coupon_columns = [
     {
       name: "code",
       label: "Code",
@@ -104,16 +149,24 @@ function PromotionPage(props) {
       }
     },
     {
-      name: "company_entity_name",
-      label: "Company",
+      name: "start_date",
+      label: "Start Date",
       options: {
         filter: true,
         sort: true,
       }
     },
     {
-      name: "promotion_id",
-      label: "Action",
+      name: "end_date",
+      label: "Expiration Date",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: "coupon_id",
+      label: "Edit",
       options: {
         filter: false,
         sort: false,
@@ -123,7 +176,7 @@ function PromotionPage(props) {
             <>
               <IconButton
                 onClick={(e) => {
-                  actionEdit(e, value)
+                  actionCouponEdit(e, value)
                 }}
               >
                 <Edit style={{ fontSize: '18' }} />
@@ -142,10 +195,11 @@ function PromotionPage(props) {
    */
 
   const actionEdit = (e, i) => {
-    // console.log(dataSource[selectedRowIndex]);
-    // history.push("/app/sales/" + selectedRowIndex + "/edit");
-    // console.log(dataSource[i]);
     history.push("/app/salesorder/promotion/" + i + "/edit");
+  }
+
+  const actionCouponEdit = (e, i) => {
+    history.push("/app/salesorder/coupon/" + i + "/edit");
   }
 
   const options = {
@@ -158,41 +212,40 @@ function PromotionPage(props) {
     fixedHeader: false, elevation: 0,
     rowsPerPageOptions: [5, 10, 20],
     resizableColumns: false,
-    // onRowsDelete: (rowsDeleted) => {
+    onRowsDelete: (rowsDeleted) => {
 
-    //   const delete_id = []
-    //   rowsDeleted.data.map((data) => {
-    //     const newDeleteId = salesviewData.salesview[data.dataIndex].sales_client_id
-    //     delete_id.push(newDeleteId)
-    //   })
-    //   console.log("deleting Ids===> ", delete_id)
-    //   delete_id.map((id) => {
-    //     // row delete api call
-    //     const requestOptions = {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify({
-    //         sales_client_id: id
-    //       })
-    //     };
-    //     fetch(`${SERVER_URL}deleteSalesClient`, requestOptions)
-    //       .then(async response => {
-    //         const data = await response.json();
-    //         console.log("Response Data=============>", data)
-    //         // check for error response
-    //         if (!response.ok) {
-    //           // get error message from body or default to response status
-    //           const error = (data && data.message) || response.status;
-    //           return Promise.reject(error);
-    //         }
-    //         return
-    //       })
-    //       .catch(error => {
-    //         notify('Something went wrong!\n' + error)
-    //         console.error('There was an error!', error);
-    //       });
-    //   })
-    // },
+      const delete_id = []
+      rowsDeleted.data.map((data) => {
+        const newDeleteId = promotionData.promotion[data.dataIndex].promotion_id
+        delete_id.push(newDeleteId)
+      })
+      console.log("deleting Ids===> ", delete_id)
+      delete_id.map((id) => {
+        // row delete api call
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            promotion_id: id
+          })
+        };
+        fetch(`${SERVER_URL}removePromotion`, requestOptions)
+          .then(async response => {
+            const data = await response.json();
+            console.log("Response Data=============>", data)
+            // check for error response
+            if (!response.ok) {
+              // get error message from body or default to response status
+              const error = (data && data.message) || response.status;
+              return Promise.reject(error);
+            }
+            return
+          })
+          .catch(error => {
+            console.error('There was an error!', error);
+          });
+      })
+    },
     onTableChange: (action, tableState) => {
       console.log(action, tableState);
       let tmp = [];
@@ -204,55 +257,69 @@ function PromotionPage(props) {
 
   };
 
+  const coupon_options = {
+    filterType: 'dropdown',
+    pagination: true,
+    print: false,
+    download: true,
+    filter: true,
+    responsive: 'scroll',
+    fixedHeader: false, elevation: 0,
+    rowsPerPageOptions: [5, 10, 20],
+    resizableColumns: false,
+    onRowsDelete: (rowsDeleted) => {
 
-  const importCSV = (data) => {
-    console.log(data)
-    addWithCSV(data)
-  }
+      const delete_id = []
+      rowsDeleted.data.map((data) => {
+        const newDeleteId = couponData.coupon[data.dataIndex].coupon_id
+        delete_id.push(newDeleteId)
+      })
+      console.log("deleting Ids===> ", delete_id)
+      delete_id.map((id) => {
+        // row delete api call
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            coupon_id: id
+          })
+        };
+        fetch(`${SERVER_URL}removeCoupon`, requestOptions)
+          .then(async response => {
+            const data = await response.json();
+            console.log("Response Data=============>", data)
+            // check for error response
+            if (!response.ok) {
+              // get error message from body or default to response status
+              const error = (data && data.message) || response.status;
+              return Promise.reject(error);
+            }
+            return
+          })
+          .catch(error => {
+            console.error('There was an error!', error);
+          });
+      })
+    },
+    onTableChange: (action, tableState) => {
+      console.log(action, tableState);
+      let tmp = [];
+      tableState.data.map((item, i) => {
+        tmp.push(item.data);
+      });
+      console.log(tmp);
+    }
 
-  const addWithCSV = (data) => {
-    // for (let i = 1; i < data.length - 1; i++) {
-    //   const row = data[i];
-    //   let saveData = {
-    //     user_id: row[0],
-    //     client_id: row[1],
-    //   }
-    //   const reqOption = {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(saveData)
-    //   }
-    //   fetch(`${SERVER_URL}addSalesClientWithCSV`, reqOption)
-    //     .then(async response => {
-    //       const data = await response.json();
-    //       console.log("Response Data=============>", data)
-    //       // check for error response
-    //       if (!response.ok) {
-    //         const error = (data && data.message) || response.status;
-    //         return Promise.reject(error);
-    //       } else if (data.client_id != null) {
-    //         notify("This client is already exist.")
-    //         return
-    //       } else if (data.id != 0) {
-
-    //         notify("Successfully appended");
-    //       }
-    //     })
-    //     .catch(error => {
-    //       notify('Something went wrong!\n' + error)
-    //       console.error('There was an error!', error);
-    //     });
-    // }
-  }
+  };
 
   return (
     <>
-      <PageTitle title="Promotion" button={["Add New"]} data={dataSource} category="salesorder_promotion" history={history} />
+      <PageTitle title="Company Loyalty" button={["Add New"]} data={dataSource} category="salesorder_promotion" history={history} />
       <Grid container spacing={4}>
         <Grid item xs={12} md={12}>
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
-              title={"Promotion"}
+              title={"Company Loyalty"}
               // data={dataSource}
               data={promotionData.promotion}
               columns={columns}
@@ -262,15 +329,20 @@ function PromotionPage(props) {
 
         </Grid>
       </Grid>
-      <Grid container spacing={1}>
-        <Grid item xs={6} md={6} lg={6}></Grid>
-        <Grid item xs={4} md={4} lg={4}>
-          <CSVReader label="Import CSV: " onFileLoaded={(data) => importCSV(data)} />
-        </Grid>
-        <Grid item xs={2} md={2} lg={2}>
-          <Button variant="outlined" color="primary" onClick={() => { window.location.reload() }}>
-            See Result
-          </Button>
+      <Divider/>
+      <PageTitle title="Coupon Loyalty" button={["Add New"]} data={dataSource} category="salesorder_coupon" history={history} />
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={12}>
+          <MuiThemeProvider theme={getMuiTheme()}>
+            <MUIDataTable
+              title={"Coupon Loyalty"}
+              // data={dataSource}
+              data={couponData.coupon}
+              columns={coupon_columns}
+              options={coupon_options}
+            />
+          </MuiThemeProvider>
+
         </Grid>
       </Grid>
     </>
@@ -279,11 +351,13 @@ function PromotionPage(props) {
 
 
 const mapStateToProps = state => ({
-  promotion: state.promotion
+  promotion: state.promotion,
+  coupon: state.coupon
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchPromotion: fetchPromotion
+  fetchPromotion: fetchPromotion,
+  fetchCoupon: fetchCoupon
 }, dispatch)
 
 export default connect(

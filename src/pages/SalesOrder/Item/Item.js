@@ -13,6 +13,8 @@ import { bindActionCreators } from "redux";
 import { useHistory } from "react-router-dom";
 import { useSelector, connect } from "react-redux";
 import fetchSalesItem from "../../../services/salesorder/SalesItemService";
+import CustomCombobox from "../../../components/FormControls/CustomCombobox";
+import fetchCompany from "../../../services/company/CompanyService";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from '../../../common/config';
@@ -23,8 +25,109 @@ function ItemPage(props) {
   const [anchorEl, setAnchorEl] = useState(null);   // Table action menu
   const [selectedRowIndex, setSelectedRowIndex] = useState(0);
   const [dataSource, setDataSource] = useState([]);
-  const salesItemData = useSelector(state => state.salesitem);
-   
+  const companyData = useSelector(state => state.company);
+
+  const [state, setState] = useState({
+    company_id: localStorage.getItem('company_id'),
+    company_entity_name: 'All',
+    companyIDList: localStorage.getItem('company_id').split(', '),
+    itemData: []
+  })
+
+  useEffect(() => {
+    props.fetchCompany();
+    console.log(companyData)
+    setDataSource(companyData.company);
+    getItemsbyCompanyId(state.company_id)
+  }, [])
+
+  const getItemsbyCompanyId = (company_id) => {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        company_id: company_id,
+      })
+    };
+    fetch(`${SERVER_URL}getItemsbyCompanyId`, requestOptions)
+      .then(async response => {
+        const data = await response.json();
+        console.log("Response Data=============>", data)
+        if (!response.ok) {
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+        }
+        setState(state => ({
+          ...state,
+          itemData: data
+        }))
+      })
+      .catch(error => {
+        notify('Something went wrong!\n' + error)
+        console.error('There was an error!', error);
+      });
+  }
+
+  const objArray2Array = (original) => {
+    let tmp = [];
+    if (Boolean(original)) {
+      if (original.length) {
+        if (state.companyIDList.length != 1) {
+          tmp.push("All")
+        }
+        original.map(item => {
+          if (state.companyIDList.includes(item?.company_id.toString())) {
+            tmp.push(item?.company_entity_name);
+          }
+        })
+        return tmp;
+      }
+      return [];
+    } else {
+      return []
+    }
+  }
+  const companies = objArray2Array(companyData.company)
+
+  const setCompanyIdfromCompanyName = (company_entity_name) => {
+    let com_id = ''
+    if (company_entity_name == "All") {
+      com_id = state.companyIDList.join(', ');
+      setState({
+        ...state,
+        company_id: com_id
+      })
+      getItemsbyCompanyId(com_id)
+    } else {
+      let object = companyData.company.filter(item => item.company_entity_name == company_entity_name)
+      if (object[0] != null) {
+        com_id = object[0].company_id.toString()
+        setState({
+          ...state,
+          company_id: com_id
+        })
+        getItemsbyCompanyId(com_id)
+      }
+    }
+  }
+
+  //input fields event
+  const handleChange = (e, field) => {
+
+    let comboFields = ['company_entity_name'];
+    if (comboFields.includes(field)) {
+      setCompanyIdfromCompanyName(e)
+      setState(prevState => ({
+        ...prevState, [field]: e
+      }))
+    } else {
+      const { name, value } = e.target;
+      setState(prevState => ({
+        ...prevState, [field]: value
+      }))
+    }
+  }
+
   //Show notification
   const notify = (message) => toast(message);
 
@@ -49,20 +152,8 @@ function ItemPage(props) {
       },
     },
   })
-  useEffect(() => {
-    props.fetchSalesItem()
-    setDataSource(salesItemData.salesitem);
-  }, [])
 
   const columns = [
-    {
-      name: "item_id",
-      label: "ID",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
     {
       name: "item_name",
       label: "Item Name",
@@ -104,8 +195,16 @@ function ItemPage(props) {
       }
     },
     {
+      name: "tag",
+      label: "Tag",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
       name: "item_id",
-      label: "Action",
+      label: "Edit",
       options: {
         filter: false,
         sort: false,
@@ -134,9 +233,6 @@ function ItemPage(props) {
    */
 
   const actionEdit = (e, i) => {
-    // console.log(dataSource[selectedRowIndex]);
-    // history.push("/app/sales/" + selectedRowIndex + "/edit");
-    // console.log(dataSource[i]);
     history.push("/app/salesorder/item/" + i + "/edit");
   }
 
@@ -154,7 +250,7 @@ function ItemPage(props) {
 
       const delete_id = []
       rowsDeleted.data.map((data) => {
-        const newDeleteId = salesItemData.salesitem[data.dataIndex].order_id
+        const newDeleteId = state.itemData.salesitem[data.dataIndex].order_id
         delete_id.push(newDeleteId)
       })
       console.log("deleting Ids===> ", delete_id)
@@ -196,45 +292,50 @@ function ItemPage(props) {
 
   };
 
-
   const importCSV = (data) => {
     console.log(data)
     addWithCSV(data)
   }
 
   const addWithCSV = (data) => {
-    // for (let i = 1; i < data.length - 1; i++) {
-    //   const row = data[i];
-    //   let saveData = {
-    //     user_id: row[0],
-    //     client_id: row[1],
-    //   }
-    //   const reqOption = {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(saveData)
-    //   }
-    //   fetch(`${SERVER_URL}addSalesClientWithCSV`, reqOption)
-    //     .then(async response => {
-    //       const data = await response.json();
-    //       console.log("Response Data=============>", data)
-    //       // check for error response
-    //       if (!response.ok) {
-    //         const error = (data && data.message) || response.status;
-    //         return Promise.reject(error);
-    //       } else if (data.client_id != null) {
-    //         notify("This client is already exist.")
-    //         return
-    //       } else if (data.id != 0) {
+    for (let i = 1; i < data.length - 1; i++) {
+      const row = data[i];
+      let saveData = {
+        item_name: row[0],
+        category_id: row[1],
+        company_id: row[2],
+        unit_price: row[3],
+        unit: row[4],
+      }
+      const reqOption = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(saveData)
+      }
+      setTimeout(
+        fetch(`${SERVER_URL}createItem`, reqOption)
+        .then(async response => {
+          const data = await response.json();
+          console.log("Response Data=============>", data)
+          // check for error response
+          if (!response.ok) {
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          } else if (data.client_id != null) {
+            notify("This client is already exist.")
+            return
+          } else if (data.id != 0) {
 
-    //         notify("Successfully appended");
-    //       }
-    //     })
-    //     .catch(error => {
-    //       notify('Something went wrong!\n' + error)
-    //       console.error('There was an error!', error);
-    //     });
-    // }
+            notify("Successfully appended");
+          }
+        })
+        .catch(error => {
+          notify('Something went wrong!\n' + error)
+          console.error('There was an error!', error);
+        }), 100
+      )
+      
+    }
   }
 
   return (
@@ -242,11 +343,16 @@ function ItemPage(props) {
       <PageTitle title="Items Database" button={["Add New"]} data={dataSource} category="salesorder_item" history={history} />
       <Grid container spacing={4}>
         <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={4}>
+            <CustomCombobox req={true} name="Company"
+              items={companies} value={companies.length == 1 ? companies[0] : state.company_entity_name}
+              handleChange={(e) => handleChange(e, 'company_entity_name')} />
+          </Grid>
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
               title={"Items Database"}
               // data={dataSource}
-              data={salesItemData.salesitem}
+              data={state.itemData}
               columns={columns}
               options={options}
             />
@@ -271,11 +377,13 @@ function ItemPage(props) {
 
 
 const mapStateToProps = state => ({
-  salesitem: state.salesitem
+  salesitem: state.salesitem,
+  company: state.company
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchSalesItem: fetchSalesItem
+  fetchSalesItem: fetchSalesItem,
+  fetchCompany: fetchCompany
 }, dispatch)
 
 export default connect(

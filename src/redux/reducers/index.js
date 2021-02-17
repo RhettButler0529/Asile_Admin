@@ -14,6 +14,7 @@ import SalesHistoryReducer from './SalesHistoryReducer';
 import SalesItemReducer from './SalesItemReducer';
 import SalesDiscountReducer from './SalesDiscountReducer';
 import SalesPromotionReducer from './SalesPromotionReducer';
+import SalesCouponReducer from './SalesCouponReducer';
 import SalesGroupReducer from './SalesGroupReducer';
 
 const rootReducer = combineReducers({
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
     salesitem: SalesItemReducer,
     discount: SalesDiscountReducer,
     promotion: SalesPromotionReducer,
+    coupon: SalesCouponReducer,
     group: SalesGroupReducer,
 
 })

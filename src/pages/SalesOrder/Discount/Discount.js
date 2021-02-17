@@ -56,14 +56,6 @@ function DiscountPage(props) {
 
   const columns = [
     {
-      name: "discount_id",
-      label: "ID",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
       name: "item_name",
       label: "Item Name",
       options: {

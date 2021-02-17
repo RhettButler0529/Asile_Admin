@@ -24,9 +24,10 @@ import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import HistoryOutlinedIcon from '@material-ui/icons/HistoryOutlined';
 import StorageOutlinedIcon from '@material-ui/icons/StorageOutlined';
-import TrendingDownOutlinedIcon from '@material-ui/icons/TrendingDownOutlined';
+import TrendingUpOutlinedIcon from '@material-ui/icons/TrendingUpOutlined';
 import SpellcheckOutlinedIcon from '@material-ui/icons/SpellcheckOutlined';
-import MergeTypeOutlinedIcon from '@material-ui/icons/MergeTypeOutlined';
+import BusinessOutlinedIcon from '@material-ui/icons/BusinessOutlined';
+import LocalOfferOutlinedIcon from '@material-ui/icons/LocalOfferOutlined';
 
 // styles
 import useStyles from "./styles";
@@ -56,24 +57,72 @@ const structure = localStorage.getItem('allow_so') != 0 ? [
   },
   {
     id: 1,
-    label: "Client",
+    label: "CRM",
     link: "/app/clientview",
     icon: <PeopleAltOutlined fontSize="small" />,
+    children: [
+      {
+        label: "Clients",
+        link: "/app/clientview",
+        icon: <VisibilityOutlinedIcon fontSize="small" />,
+      },
+      {
+        label: "Sales Client",
+        link: "/app/salesview",
+        icon: <TransferWithinAStationOutlined fontSize="small" />,
+      },
+    ]
   },
   {
     id: 2,
+    label: "Inventory",
+    link: "/app/salesorder/group",
+    icon: <BusinessOutlinedIcon fontSize="small" />,
+    children: [
+      {
+        label: "Category",
+        link: "/app/salesorder/group",
+        icon: <SpellcheckOutlinedIcon fontSize="small" />,
+      },
+      {
+        label: "Items Database",
+        link: "/app/salesorder/item",
+        icon: <StorageOutlinedIcon fontSize="small" />,
+      },
+    ]
+  },
+  {
+    id: 7,
+    label: "Promotions",
+    link: "/app/salesorder/promotion",
+    icon: <LocalOfferOutlinedIcon fontSize="small" />,
+  },
+  {
+    id: 3,
+    label: "Sales Target",
+    link: "/app/salesorder/itemcategory",
+    icon: <TrendingUpOutlinedIcon fontSize="small" />,
+    children: [
+      {
+        label: "Item Categories",
+        link: "/app/salesorder/itemcategory",
+        icon: <SpellcheckOutlinedIcon fontSize="small" />,
+      },
+      {
+        label: "Company Users",
+        link: "/app/salesorder/companyusers",
+        icon: <StorageOutlinedIcon fontSize="small" />,
+      }
+    ]
+  },
+  {
+    id: 4,
     label: "Schedule",
     link: "/app/scheduleview",
     icon: <TimerOutlined fontSize="small" />,
   },
   {
-    id: 3,
-    label: "Sales Client",
-    link: "/app/salesview",
-    icon: <TransferWithinAStationOutlined fontSize="small" />,
-  },
-  {
-    id: 5,
+    id: 6,
     label: "Sales Order",
     link: "/app/salesorder/review",
     icon: <ShoppingCartOutlinedIcon fontSize="small" />,
@@ -88,25 +137,10 @@ const structure = localStorage.getItem('allow_so') != 0 ? [
         link: "/app/salesorder/history",
         icon: <HistoryOutlinedIcon fontSize="small" />,
       },
-      {
-        label: "Items Database",
-        link: "/app/salesorder/item",
-        icon: <StorageOutlinedIcon fontSize="small" />,
-      },
-      {
-        label: "Promotions",
-        link: "/app/salesorder/promotion",
-        icon: <SpellcheckOutlinedIcon fontSize="small" />,
-      },
-      {
-        label: "Categories",
-        link: "/app/salesorder/group",
-        icon: <SpellcheckOutlinedIcon fontSize="small" />,
-      },
     ],
   },
   {
-    id: 4,
+    id: 5,
     label: "Report",
     link: "/app/schedule_report",
     icon: <AssessmentOutlined fontSize="small" />,
@@ -132,24 +166,72 @@ const structure = localStorage.getItem('allow_so') != 0 ? [
     },
     {
       id: 1,
-      label: "Client",
+      label: "CRM",
       link: "/app/clientview",
       icon: <PeopleAltOutlined fontSize="small" />,
+      children: [
+        {
+          label: "Clients",
+          link: "/app/clientview",
+          icon: <VisibilityOutlinedIcon fontSize="small" />,
+        },
+        {
+          label: "Sales Client",
+          link: "/app/salesview",
+          icon: <TransferWithinAStationOutlined fontSize="small" />,
+        },
+      ]
     },
     {
       id: 2,
+      label: "Inventory",
+      link: "/app/salesorder/group",
+      icon: <BusinessOutlinedIcon fontSize="small" />,
+      children: [
+        {
+          label: "Category",
+          link: "/app/salesorder/group",
+          icon: <SpellcheckOutlinedIcon fontSize="small" />,
+        },
+        {
+          label: "Items Database",
+          link: "/app/salesorder/item",
+          icon: <StorageOutlinedIcon fontSize="small" />,
+        },
+      ]
+    },
+    {
+      id: 6,
+      label: "Promotions",
+      link: "/app/salesorder/promotion",
+      icon: <LocalOfferOutlinedIcon fontSize="small" />,
+    },
+    {
+      id: 3,
+      label: "Sales Target",
+      link: "/app/salesorder/itemcategory",
+      icon: <TrendingUpOutlinedIcon fontSize="small" />,
+      children: [
+        {
+          label: "Item Categories",
+          link: "/app/salesorder/itemcategory",
+          icon: <SpellcheckOutlinedIcon fontSize="small" />,
+        },
+        {
+          label: "Company Users",
+          link: "/app/salesorder/companyusers",
+          icon: <StorageOutlinedIcon fontSize="small" />,
+        }
+      ]
+    },
+    {
+      id: 4,
       label: "Schedule",
       link: "/app/scheduleview",
       icon: <TimerOutlined fontSize="small" />,
     },
     {
-      id: 3,
-      label: "Sales Client",
-      link: "/app/salesview",
-      icon: <TransferWithinAStationOutlined fontSize="small" />,
-    },
-    {
-      id: 4,
+      id: 5,
       label: "Report",
       link: "/app/schedule_report",
       icon: <AssessmentOutlined fontSize="small" />,

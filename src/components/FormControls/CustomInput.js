@@ -30,7 +30,7 @@ export default function CustomInput(props) {
                 rows={4}
                 required
                 label={props.title}
-                // defaultValue="Hello World"\
+                disabled={props.disabled}
                 type={props.type}
                 value={props.value}
                 // helperText="Incorrect entry."

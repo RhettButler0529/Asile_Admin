@@ -2,11 +2,11 @@ import { fetchSalesItemRequest, fetchSalesItemSuccess, fetchSalesItemError } fro
 import { SERVER_URL } from "../../common/config";
 import SalesItemReducer from "../../redux/reducers/SalesItemReducer";
 
-function fetchSalesItem() {
+function fetchSalesItem(company_id) {
     return dispatch => {
         dispatch(fetchSalesItemRequest());
         let body = {
-            company_id: localStorage.getItem('company_id')
+            company_id: company_id
         }
         setTimeout(() => {
             fetch(`${SERVER_URL}getItemsbyCompanyId`, {

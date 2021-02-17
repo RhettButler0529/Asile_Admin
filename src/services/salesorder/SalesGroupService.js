@@ -5,14 +5,10 @@ import SalesGroupReducer from "../../redux/reducers/SalesGroupReducer";
 function fetchGroup() {
     return dispatch => {
         dispatch(fetchGroupRequest());
-        let body = {
-            company_id: localStorage.getItem('company_id')
-        }
         setTimeout(() => {
-            fetch(`${SERVER_URL}getCategoryByCompanyId`, {
+            fetch(`${SERVER_URL}getCategory`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
             })
             .then(res => res.json())
             .then(res => {
