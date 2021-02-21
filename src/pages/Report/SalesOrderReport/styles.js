@@ -12,10 +12,6 @@ export default makeStyles(theme => ({
   text: {
     marginBottom: theme.spacing(2),
   },
-
-  /**
-   * EditInvoice.js
-   */
   formControl: {
     margin: theme.spacing(1),
     minWidth: '100%',
@@ -42,18 +38,13 @@ export default makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
-  //Edit Invoice // eslint-disable-next-line
-
-  /**
-   * Show Invoice
-   */
   statusTextContainer: {
     backgroundColor: theme.palette.mysecondary.light,
     color: "#FFF",
     padding: theme.spacing(2),
   },
   statusText: {
-    // padding: theme.spacing(3),
+    // padding: theme.spacing(1),
   },
   invoiceContainer: {
     height: 40,
@@ -126,35 +117,6 @@ export default makeStyles(theme => ({
       backgroundColor: theme.palette.myprimary.main,
     }
   },
-  //Show Invoice End
+  //Show Bill End
 
-  /**
-   * Notification Bar
-   */
-  notificationItem: {
-    marginTop: theme.spacing(2),
-  },
-  notificationCloseButton: {
-    position: "absolute",
-    right: theme.spacing(2),
-  },
-  toastsContainer: {
-    width: 400,
-    marginTop: theme.spacing(6),
-    right: 0,
-  },
-  progress: {
-    visibility: "hidden",
-  },
-  notification: {
-    display: "flex",
-    alignItems: "center",
-    background: "transparent",
-    boxShadow: "none",
-    overflow: "visible",
-  },
-  notificationComponent: {
-    paddingRight: theme.spacing(4),
-  },
-  //Notification Bar End
 }));

@@ -5,9 +5,9 @@ export default makeStyles(theme => ({
     border: "1px dashed",
     borderColor: theme.palette.primary.main,
     padding: theme.spacing(2),
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-    marginTop: theme.spacing(1),
+    // paddingTop: theme.spacing(4),
+    // paddingBottom: theme.spacing(4),
+    // marginTop: theme.spacing(1),
   },
   text: {
     marginBottom: theme.spacing(2),
@@ -33,7 +33,7 @@ export default makeStyles(theme => ({
     justifyContent: 'flex-end',
   },
   modal: {
-    padding: 10,
+    padding: 150,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

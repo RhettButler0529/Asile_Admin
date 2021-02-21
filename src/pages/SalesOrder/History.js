@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, IconButton, Typography, Menu, MenuItem } from "@material-ui/core";
+import { Grid, IconButton, Typography, Divider, MenuItem } from "@material-ui/core";
 import MUIDataTable from "mui-datatables";
 import MenuIcon from '@material-ui/icons/Menu';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -8,6 +8,7 @@ import useStyles from "./styles";
 
 // components
 import PageTitle from "../../components/PageTitle/PageTitle";
+import Widget from "../../components/Widget/Widget";
 import { bindActionCreators } from "redux";
 import { useHistory } from "react-router-dom";
 import { useSelector, connect } from "react-redux";
@@ -35,12 +36,8 @@ function HistoryPage(props) {
   const [state, setState] = useState({
     start_date: new Date(curDate.getFullYear(), curDate.getMonth(), 1),
     end_date: new Date(curDate.getFullYear(), curDate.getMonth() + 1, 0),
-    inShow: false,
-    outShow: false,
-    uploaded_picture: '',
-    user_signature: '',
-    client_signature: '',
-    location: '',
+    showModal: false,
+    selectedOrder: null,
   })
 
   const handleDateChange = (date, field) => {
@@ -92,63 +89,15 @@ function HistoryPage(props) {
   })
   const columns = [
     {
-      name: "full_name",
-      label: "User",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "client_entity_name",
-      label: "Client",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "order_items",
-      label: "Items",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "promotions",
-      label: "Promotion",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "tax",
-      label: "Tax",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "shipping_cost",
-      label: "Shipping Cost",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
-      name: "net_total",
-      label: "Total",
-      options: {
-        filter: true,
-        sort: true,
-      }
-    },
-    {
       name: "order_date",
+      label: "Order Date",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: "due_date",
       label: "Due Date",
       options: {
         filter: true,
@@ -156,74 +105,40 @@ function HistoryPage(props) {
       }
     },
     {
-      name: "notes",
-      label: "Notes",
+      name: "full_name",
+      label: "Sales Name",
       options: {
         filter: true,
         sort: true,
       }
     },
-    // {
-    //   name: "client_signature",
-    //   label: "Client Signature",
-    //   options: {
-    //     filter: true,
-    //     sort: true,
-    //     customBodyRender: (value, tableMeta, updateValue) => {
-    //       console.log(value)
-    //       return (
-    //         <a href={`${SERVER_URL}signature/${value}`} target="_blank"> {value} </a>
-    //       );
-    //     }
-    //   }
-    // },
-    // {
-    //   name: "user_signature",
-    //   label: "User Signature",
-    //   options: {
-    //     filter: true,
-    //     sort: true,
-    //     customBodyRender: (value, tableMeta, updateValue) => {
-    //       console.log(value)
-    //       return (
-    //         <a href={`${SERVER_URL}signature/${value}`} target="_blank"> {value} </a>
-    //       );
-    //     }
-    //   }
-    // },
-    // {
-    //   name: "upload_picture",
-    //   label: "Uploaded Picture",
-    //   options: {
-    //     filter: true,
-    //     sort: true,
-    //     customBodyRender: (value, tableMeta, updateValue) => {
-    //       console.log(value)
-    //       return (
-    //         <a href={`${SERVER_URL}upload/${value}`} target="_blank"> {value} </a>
-    //       );
-    //     }
-    //   }
-    // },
     {
-      name: "custom_field",
-      label: "Custom Field",
+      name: "client_entity_name",
+      label: "Client Name",
       options: {
         filter: true,
         sort: true,
       }
     },
-    // {
-    //   name: "location",
-    //   label: "Location",
-    //   options: {
-    //     filter: true,
-    //     sort: true,
-    //   }
-    // },
+    {
+      name: "net_total",
+      label: "Total Amount",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
+    {
+      name: "company_entity_name",
+      label: "Area",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    },
     {
       name: "status",
-      label: "Status",
+      label: "Order Status",
       options: {
         filter: true,
         sort: true,
@@ -231,21 +146,6 @@ function HistoryPage(props) {
           return (
             <Status3 status={
               value == 0 ? 'pending' : (value == 1 ? 'accept' : 'reject')
-            } />
-          );
-        }
-      }
-    },
-    {
-      name: "order_method",
-      label: "Order Method",
-      options: {
-        filter: true,
-        sort: true,
-        customBodyRender: (value, tableMeta, updateValue) => {
-          return (
-            <Status2 status={
-              value
             } />
           );
         }
@@ -278,21 +178,11 @@ function HistoryPage(props) {
   const actionView = (e, i) => {
 
     historyData.saleshistory.filter(item => item.order_id == i).map(k => {
-      if (k.order_method == 'in') {
-        setState({
-          ...state,
-          inShow: true,
-          user_signature: `${SERVER_URL}signature/${k.user_signature}`,
-          client_signature: `${SERVER_URL}signature/${k.client_signature}`,
-          location: k.location
-        })
-      } else if (k.order_method == 'out') {
-        setState({
-          ...state,
-          outShow: true,
-          uploaded_picture: `${SERVER_URL}upload/${k.upload_picture}`,
-        })
-      }
+      setState({
+        ...state,
+        showModal: true,
+        selectedOrder: k
+      })
     }
     )
 
@@ -343,14 +233,6 @@ function HistoryPage(props) {
           });
       })
     },
-    // onTableChange: (action, tableState) => {
-    //   console.log(action, tableState);
-    //   let tmp = [];
-    //   tableState.data.map((item) => {
-    //     tmp.push(item.data);
-    //   });
-    //   console.log(tmp);
-    // }
 
   };
 
@@ -360,14 +242,14 @@ function HistoryPage(props) {
       <Grid container spacing={4}>
         <Grid item xs={12} md={12}>
           <MuiThemeProvider theme={getMuiTheme()}>
-            <Grid container spacing={1}>
+            {/* <Grid container spacing={1}>
               <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
                 <CustomDatePicker title="Start Date" selectedDate={state.start_date} handleChange={(e) => handleDateChange(e, 'start_date')} />
               </Grid>
               <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
                 <CustomDatePicker title="End Date" selectedDate={state.end_date} handleChange={(e) => handleDateChange(e, 'end_date')} />
               </Grid>
-            </Grid>
+            </Grid> */}
             <MUIDataTable
               title={"Orders History"}
               data={historyData.saleshistory}
@@ -376,55 +258,93 @@ function HistoryPage(props) {
               options={options}
             />
             <Modal
-              open={state.inShow}
-              onClose={() => {
-                setState({
-                  ...state,
-                  inShow: false,
-                  // outShow: false,
-                  // uploaded_picture: '',
-                  // user_signature: '',
-                  // client_signature: '',
-                  // location: '',
-                })
-              }}
-              aria-labelledby="transition-modal-title"
-              aria-describedby="transition-modal-description"
-              className={classes.modal}
-            >
-              <div className={classes.paper}>
-                <div style={{ flexDirection: "row", }}>
-                  <Typography variant="h4" style={{ padding: 10, marginTop: 30, marginBottom: 20 }}>User Signature</Typography>
-                  <img className={classes.img} src={state.user_signature} alt="No ser signature" />
-                  <Typography variant="h4" style={{ padding: 10, marginTop: 20, marginBottom: 20 }}>Client Signature</Typography>
-                  <img className={classes.img} src={state.client_signature} alt="No client signature" />
-                  <Typography variant="h4" style={{ padding: 10, marginTop: 20, marginBottom: 20 }}>Location : {state.location}</Typography>
-                </div>
-              </div>
-            </Modal>
-            <Modal
-              open={state.outShow}
+              open={state.showModal}
               onClose={() => setState(
                 {
                   ...state,
-                  // inShow: false,
-                  outShow: false,
-                  // uploaded_picture: '',
-                  // user_signature: '',
-                  // client_signature: '',
-                  // location: '',
+                  showModal: false,
+                  selectedOrder: null
                 }
               )}
               aria-labelledby="transition-modal-title"
               aria-describedby="transition-modal-description"
               className={classes.modal}
             >
-              <div className={classes.paper}>
-                <div style={{ flexDirection: "row", }}>
-                  <Typography variant="h4" style={{ padding: 10, marginTop: 30, marginBottom: 20 }}>Uploaded Picture</Typography>
-                  <img className={classes.img} src={state.uploaded_picture} alt="No uploaded picture" />
-                </div>
-              </div>
+
+              <Widget title="View Detail" disableWidgetMenu>
+                <Divider />
+                <Grid container spacing={4}>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Sales name : {state.selectedOrder?.full_name}</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Client Name : {state.selectedOrder?.client_entity_name}</Typography>
+                  </Grid>
+                </Grid>
+                <Divider />
+                <Grid container spacing={4}>
+
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Order date : {state.selectedOrder?.order_date}</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Due date : {state.selectedOrder?.due_date}</Typography>
+                  </Grid>
+                </Grid>
+                <Divider />
+                <Grid container spacing={4}>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Total Amount : {state.selectedOrder?.net_total}</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Area : {state.selectedOrder?.company_entity_name}</Typography>
+                  </Grid>
+
+                </Grid>
+                <Divider />
+                <Grid container spacing={4}>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Status3 status={
+                      state.selectedOrder?.status == 0 ? 'pending' : (state.selectedOrder?.status == 1 ? 'accept' : 'reject')
+                    } />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Promotion : {state.selectedOrder?.promotions}</Typography>
+                  </Grid>
+                </Grid>
+                <Divider />
+                <Grid container spacing={4}>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Tax : {state.selectedOrder?.tax}</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Shipping Cost : {state.selectedOrder?.shipping_cost}</Typography>
+                  </Grid>
+                </Grid>
+                <Divider />
+                <Grid container spacing={4}>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Items : {state.selectedOrder?.order_items}</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={6} lg={6} className={classes.formContainer}>
+                    <Typography variant={'subtitle1'}>Notes : {state.selectedOrder?.notes}</Typography>
+                  </Grid>
+                </Grid>
+                <Divider />
+                {
+                  state.selectedOrder?.custom_field != null ?
+                    <Grid container spacing={4}>
+                      {
+                        state.selectedOrder?.custom_field.split(', ').map(item => {
+                          return <Grid item xs={12} sm={4} md={4} lg={4} className={classes.formContainer}>
+                            <Typography variant={'subtitle1'}>{item.split(":")[0]}: {item.split(":")[1]}</Typography>
+                          </Grid>
+                        })
+                      }
+                    </Grid> : null
+                }
+              </Widget>
+
             </Modal>
 
           </MuiThemeProvider>

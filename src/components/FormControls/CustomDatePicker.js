@@ -28,6 +28,7 @@ export default function CustomDatePicker( props ) {
             variant="inline"
             animateYearScrolling
             autoOk
+            // views
             clearable='true'
             label={props.title}
             value={props.selectedDate}

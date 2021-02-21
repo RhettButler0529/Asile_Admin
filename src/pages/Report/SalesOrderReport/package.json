@@ -1,6 +1,6 @@
 {
-  "name": "Invoices",
+  "name": "Companys",
   "version": "0.0.0",
-  "main": "Invoices.js",
+  "main": "Companys.js",
   "private": true
 }

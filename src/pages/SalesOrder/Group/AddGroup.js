@@ -62,48 +62,12 @@ function AddGroupPage(props) {
 
     const handleChange = (e, field) => {
 
-        // let comboFields = ['company_entity_name'];
-        // if (comboFields.includes(field)) {
-        //     setCompanyIdfromCompanyName(e)
-        //     setState(prevState => ({
-        //         ...prevState, [field]: e
-        //     }))
-        // } else {
         const { name, value } = e.target;
         setState(prevState => ({
             ...prevState, [field]: value
         }))
-        // }
     }
 
-    // const objArray2Array = (original) => {
-    //     console.log('originall ====> ', original, companyData.data)
-    //     let tmp = [];
-    //     if (Boolean(original)) {
-    //         if (original.length) {
-    //             original.map(item => {
-    //                 tmp.push(item?.company_entity_name);
-    //             })
-    //             return tmp;
-    //         }
-    //         return [];
-    //     } else {
-    //         return []
-    //     }
-    // }
-
-    // const companies = objArray2Array(companyData.company)
-
-    // const setCompanyIdfromCompanyName = (company_entity_name) => {
-    //     let object = companyData.company.filter(item => item.company_entity_name == company_entity_name)
-    //     if (object[0] != null) {
-    //         setState({
-    //             ...state,
-    //             company_id: object[0].company_id.toString()
-    //         })
-    //     }
-
-    // }
 
     const onSaveandNew = () => {
         if (state.category_name == null || state.category_name == "") {

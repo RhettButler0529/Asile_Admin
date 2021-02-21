@@ -44,14 +44,15 @@ import AddPromotionPage from '../../pages/SalesOrder/Promotion/AddPromotion'
 import EditPromotionPage from '../../pages/SalesOrder/Promotion/EditPromotion'
 import AddCouponPage from '../../pages/SalesOrder/Promotion/AddCoupon'
 import EditCouponPage from '../../pages/SalesOrder/Promotion/EditCoupon'
-import TargetPage from '../../pages/SalesOrder/Target/Target'
+import TargetPage from '../../pages/Report/SalesOrderReport/Target'
 import GroupPage from '../../pages/SalesOrder/Group/Group'
 import AddGroupPage from '../../pages/SalesOrder/Group/AddGroup'
 import EditGroupPage from '../../pages/SalesOrder/Group/EditGroup'
 import ItemCategoryPage from '../../pages/SalesOrder/ItemCategory/ItemCategory'
 import EditItemCategoryPage from '../../pages/SalesOrder/ItemCategory/EditItemCategory'
 import CompanyUsersPage from '../../pages/SalesOrder/CompanyUsers/CompanyUsers'
-import SettingPage from '../../pages/Setting/Setting'
+import EditCompanyUserPage from '../../pages/SalesOrder/CompanyUsers/EditCompanyUser'
+import SettingPage from '../../pages/SalesOrder/CompanyUsers/Setting/Setting'
 // import EditItemPage from '../../pages/SalesOrder/Item/EditItem'
 import Footer from "../Footer/Footer";
 
@@ -111,13 +112,15 @@ function Layout(props) {
                 <Route exact path="/app/salesorder/promotion/:promotion/edit" component={EditPromotionPage} />
                 <Route exact path="/app/salesorder/coupon/add" component={AddCouponPage} />
                 <Route exact path="/app/salesorder/coupon/:coupon/edit" component={EditCouponPage} />
-                <Route exact path="/app/salesorder/setting" component={SettingPage} />
+                {/* <Route exact path="/app/salesorder/setting" component={SettingPage} /> */}
                 <Route exact path="/app/salesorder/group" component={GroupPage} />
                 <Route exact path="/app/salesorder/group/add" component={AddGroupPage} />
                 <Route exact path="/app/salesorder/group/:group/edit" component={EditGroupPage} />
                 <Route exact path="/app/salesorder/itemcategory" component={ItemCategoryPage} />
                 <Route exact path="/app/salesorder/itemcategory/:itemcategory/edit" component={EditItemCategoryPage} />
                 <Route exact path="/app/salesorder/companyusers" component={CompanyUsersPage} />
+                <Route exact path="/app/salesorder/companyusers/:company_id/:company_entity_name/setting" component={SettingPage} />
+                <Route exact path="/app/salesorder/companyusers/:user_id/edit" component={EditCompanyUserPage} />
                 <Route component={Error} />
               </Switch>
             </Grid>

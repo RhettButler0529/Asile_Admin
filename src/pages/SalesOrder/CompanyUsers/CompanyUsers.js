@@ -28,6 +28,7 @@ function CompanyUsersPage(props) {
   const userViewData = useSelector(state => state.userview);
   const companyData = useSelector(state => state.company);
 
+  
   const [state, setState] = useState({
     company_id: localStorage.getItem('company_id'),
     company_entity_name: 'All',
@@ -275,7 +276,7 @@ function CompanyUsersPage(props) {
                 style={{ marginTop: 30, marginLeft: 10 }}
                 // startIcon={iconVar[item]}
                 onClick={() => {
-                  history.push('/app/salesorder/setting')
+                  history.push("/app/salesorder/companyusers/" + state.company_id + "/" + state.company_entity_name + "/setting")
                 }}
               >
                 Setting
