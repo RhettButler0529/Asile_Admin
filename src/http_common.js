@@ -2,7 +2,7 @@ import axios from "axios";
 import { SERVER_URL } from './common/config'
 
 export default axios.create({
-  baseURL: 'http://admin.asile.id:4000',
+  baseURL: 'http://185.151.51.169:4000',
   headers: {
     "Content-Type": "application/json"
   }

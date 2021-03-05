@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Toolbar, IconButton, InputBase, Tooltip, FormControlLabel, Switch, Menu, MenuItem, Divider } from "@material-ui/core";
+import {
+  Grid,
+  Toolbar,
+  IconButton,
+  InputBase,
+  Tooltip,
+  FormControlLabel,
+  Switch,
+  Menu,
+  MenuItem,
+  Divider, Button,
+} from "@material-ui/core";
 import MUIDataTable from "mui-datatables";
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 // styles
 import useStyles from "./styles";
 
@@ -13,8 +24,10 @@ import { useSelector, connect } from "react-redux";
 import fetchScheduleView from "../../services/scheduleview/ScheduleViewService";
 import { bindActionCreators } from "redux";
 import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import { SERVER_URL } from '../../common/config';
+import "react-toastify/dist/ReactToastify.css";
+import { SERVER_URL } from "../../common/config";
+import CSVReader from "react-csv-reader";
+import moment from "moment";
 
 
 function ScheduleViewPage(props) {
@@ -33,26 +46,26 @@ function ScheduleViewPage(props) {
         root: {
           paddingTop: "5px",
           paddingBottom: "5px",
-          fontSize: '.8125rem',
+          fontSize: ".8125rem",
         },
-      }
+      },
     },
     MuiTableCell: {
       root: {
-        borderColor: '#d3d3d3',
-        fontSize: '.8125rem',
+        borderColor: "#d3d3d3",
+        fontSize: ".8125rem",
       },
       head: {
         paddingTop: "5px",
         paddingBottom: "5px",
       },
     },
-  })
+  });
   useEffect(() => {
-    console.log(scheduleviewData)
+    console.log(scheduleviewData);
     props.fetchScheduleView();
     setDataSource(scheduleviewData.scheduleview);
-  }, [])
+  }, []);
 
   const columns = [
     {
@@ -61,7 +74,7 @@ function ScheduleViewPage(props) {
       options: {
         filter: true,
         sort: true,
-      }
+      },
     },
     {
       name: "full_name",
@@ -69,7 +82,7 @@ function ScheduleViewPage(props) {
       options: {
         filter: true,
         sort: true,
-      }
+      },
     },
     {
       name: "client_entity_name",
@@ -77,7 +90,7 @@ function ScheduleViewPage(props) {
       options: {
         filter: true,
         sort: true,
-      }
+      },
     },
     {
       name: "schedule_datetime",
@@ -85,7 +98,7 @@ function ScheduleViewPage(props) {
       options: {
         filter: true,
         sort: true,
-      }
+      },
     },
     {
       name: "predicted_time_spent",
@@ -93,7 +106,7 @@ function ScheduleViewPage(props) {
       options: {
         filter: true,
         sort: true,
-      }
+      },
     },
     {
       name: "notes",
@@ -110,11 +123,11 @@ function ScheduleViewPage(props) {
         filter: true,
         sort: true,
         customBodyRender: (value, tableMeta, updateValue) => {
-          console.log(value)
+          console.log(value);
           return (
             <a href={`${SERVER_URL}upload/${value}`} target="_blank"> {value} </a>
           );
-        }
+        },
       },
     },
     {
@@ -151,7 +164,7 @@ function ScheduleViewPage(props) {
           return (
             <Status status={value ? "yes" : "no"} />
           );
-        }
+        },
       },
     },
     {
@@ -164,7 +177,7 @@ function ScheduleViewPage(props) {
           return (
             <Status status={value != "0000-00-00 00:00:00" ? "yes" : "no"} />
           );
-        }
+        },
       },
     },
     {
@@ -174,11 +187,11 @@ function ScheduleViewPage(props) {
         filter: true,
         sort: true,
         customBodyRender: (value, tableMeta, updateValue) => {
-          console.log(value)
+          console.log(value);
           return (
             <a href={`${SERVER_URL}signature/${value}`} target="_blank"> {value} </a>
           );
-        }
+        },
       },
     },
 
@@ -186,18 +199,18 @@ function ScheduleViewPage(props) {
 
   /**
    * Table Action menu event
-   * @param {*} event 
-   * @param {*} i 
+   * @param {*} event
+   * @param {*} i
    */
 
 
   const options = {
-    filterType: 'dropdown',
+    filterType: "dropdown",
     pagination: true,
     print: false,
     download: true,
     filter: true,
-    responsive: 'scroll',
+    responsive: "scroll",
     fixedHeader: false, elevation: 0,
     rowsPerPageOptions: [5, 10, 20],
     resizableColumns: false,
@@ -209,10 +222,53 @@ function ScheduleViewPage(props) {
         tmp.push(item.data);
       });
       console.log(tmp);
-    }
+    },
 
   };
 
+  const importCSV = (data) => {
+    console.log(data);
+    addWithCSV(data);
+  };
+
+  const addWithCSV = (data) => {
+    for (let i = 1; i < data.length - 1; i++) {
+      setTimeout(() => {
+        const row = data[i];
+        let saveData = {
+          user_id: row[0],
+          client_id: row[1],
+          schedule_datetime: moment(row[2]).format('YYYY-MM-DD hh:mm:ss'),
+          predicted_time_spent: row[3],
+          reason: row[4],
+        };
+        const reqOption = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(saveData),
+        };
+        fetch(`${SERVER_URL}createNewSchedule`, reqOption)
+          .then(async response => {
+            const data = await response.json();
+            console.log("Response Data=============>", data);
+            // check for error response
+            if (!response.ok) {
+              const error = (data && data.message) || response.status;
+              return Promise.reject(error);
+            } else if (response.schedule_id == "0") {
+              notify("This timeframe is already exist.");
+              return;
+            } else {
+              notify("Successfully appended");
+            }
+          })
+          .catch(error => {
+            notify("Something went wrong!\n" + error);
+            console.error("There was an error!", error);
+          });
+      }, 500);
+    }
+  };
 
 
   return (
@@ -231,19 +287,32 @@ function ScheduleViewPage(props) {
 
         </Grid>
       </Grid>
+      <Grid container spacing={1}>
+        <Grid item xs={6} md={6} lg={6}></Grid>
+        <Grid item xs={4} md={4} lg={4}>
+          <CSVReader label="Import CSV: " onFileLoaded={(data) => importCSV(data)} />
+        </Grid>
+        <Grid item xs={2} md={2} lg={2}>
+          <Button variant="outlined" color="primary" onClick={() => {
+            window.location.reload();
+          }}>
+            See Result
+          </Button>
+        </Grid>
+      </Grid>
     </>
   );
 }
 
 const mapStateToProps = state => ({
-  scheduleview: state.scheduleview
-})
+  scheduleview: state.scheduleview,
+});
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchScheduleView: fetchScheduleView
-}, dispatch)
+  fetchScheduleView: fetchScheduleView,
+}, dispatch);
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(ScheduleViewPage);

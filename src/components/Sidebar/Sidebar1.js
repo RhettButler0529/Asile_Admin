@@ -73,72 +73,72 @@ const structure = localStorage.getItem('allow_so') != 0 ? [
       },
     ]
   },
-  {
-    id: 2,
-    label: "Inventory",
-    link: "/app/salesorder/group",
-    icon: <BusinessOutlinedIcon fontSize="small" />,
-    children: [
-      {
-        label: "Category",
-        link: "/app/salesorder/group",
-        icon: <SpellcheckOutlinedIcon fontSize="small" />,
-      },
-      {
-        label: "Items Database",
-        link: "/app/salesorder/item",
-        icon: <StorageOutlinedIcon fontSize="small" />,
-      },
-    ]
-  },
-  {
-    id: 7,
-    label: "Promotions",
-    link: "/app/salesorder/promotion",
-    icon: <LocalOfferOutlinedIcon fontSize="small" />,
-  },
-  {
-    id: 3,
-    label: "Sales Target",
-    link: "/app/salesorder/itemcategory",
-    icon: <TrendingUpOutlinedIcon fontSize="small" />,
-    children: [
-      {
-        label: "Item Categories",
-        link: "/app/salesorder/itemcategory",
-        icon: <SpellcheckOutlinedIcon fontSize="small" />,
-      },
-      {
-        label: "Company Users",
-        link: "/app/salesorder/companyusers",
-        icon: <StorageOutlinedIcon fontSize="small" />,
-      }
-    ]
-  },
+  // {
+  //   id: 2,
+  //   label: "Inventory",
+  //   link: "/app/salesorder/group",
+  //   icon: <BusinessOutlinedIcon fontSize="small" />,
+  //   children: [
+  //     {
+  //       label: "Category",
+  //       link: "/app/salesorder/group",
+  //       icon: <SpellcheckOutlinedIcon fontSize="small" />,
+  //     },
+  //     {
+  //       label: "Items Database",
+  //       link: "/app/salesorder/item",
+  //       icon: <StorageOutlinedIcon fontSize="small" />,
+  //     },
+  //   ]
+  // },
+  // {
+  //   id: 7,
+  //   label: "Promotions",
+  //   link: "/app/salesorder/promotion",
+  //   icon: <LocalOfferOutlinedIcon fontSize="small" />,
+  // },
+  // {
+  //   id: 3,
+  //   label: "Sales Target",
+  //   link: "/app/salesorder/itemcategory",
+  //   icon: <TrendingUpOutlinedIcon fontSize="small" />,
+  //   children: [
+  //     {
+  //       label: "Item Categories",
+  //       link: "/app/salesorder/itemcategory",
+  //       icon: <SpellcheckOutlinedIcon fontSize="small" />,
+  //     },
+  //     {
+  //       label: "Company Users",
+  //       link: "/app/salesorder/companyusers",
+  //       icon: <StorageOutlinedIcon fontSize="small" />,
+  //     }
+  //   ]
+  // },
   {
     id: 4,
     label: "Schedule",
     link: "/app/scheduleview",
     icon: <TimerOutlined fontSize="small" />,
   },
-  {
-    id: 6,
-    label: "Sales Order",
-    link: "/app/salesorder/review",
-    icon: <ShoppingCartOutlinedIcon fontSize="small" />,
-    children: [
-      {
-        label: "Review Orders",
-        link: "/app/salesorder/review",
-        icon: <VisibilityOutlinedIcon fontSize="small" />,
-      },
-      {
-        label: "Orders History",
-        link: "/app/salesorder/history",
-        icon: <HistoryOutlinedIcon fontSize="small" />,
-      },
-    ],
-  },
+  // {
+  //   id: 6,
+  //   label: "Sales Order",
+  //   link: "/app/salesorder/review",
+  //   icon: <ShoppingCartOutlinedIcon fontSize="small" />,
+  //   children: [
+  //     {
+  //       label: "Review Orders",
+  //       link: "/app/salesorder/review",
+  //       icon: <VisibilityOutlinedIcon fontSize="small" />,
+  //     },
+  //     {
+  //       label: "Orders History",
+  //       link: "/app/salesorder/history",
+  //       icon: <HistoryOutlinedIcon fontSize="small" />,
+  //     },
+  //   ],
+  // },
   {
     id: 5,
     label: "Report",
@@ -150,11 +150,12 @@ const structure = localStorage.getItem('allow_so') != 0 ? [
         link: "/app/schedule_report",
         icon: <VisibilityOutlinedIcon fontSize="small" />,
       },
-      {
-        label: "Sales Order Report",
-        link: "/app/salesorder_report",
-        icon: <HistoryOutlinedIcon fontSize="small" />,
-      }]
+      // {
+      //   label: "Sales Order Report",
+      //   link: "/app/salesorder_report",
+      //   icon: <HistoryOutlinedIcon fontSize="small" />,
+      // }
+    ]
   },
 
 ] : [
@@ -182,48 +183,48 @@ const structure = localStorage.getItem('allow_so') != 0 ? [
         },
       ]
     },
-    {
-      id: 2,
-      label: "Inventory",
-      link: "/app/salesorder/group",
-      icon: <BusinessOutlinedIcon fontSize="small" />,
-      children: [
-        {
-          label: "Category",
-          link: "/app/salesorder/group",
-          icon: <SpellcheckOutlinedIcon fontSize="small" />,
-        },
-        {
-          label: "Items Database",
-          link: "/app/salesorder/item",
-          icon: <StorageOutlinedIcon fontSize="small" />,
-        },
-      ]
-    },
-    {
-      id: 6,
-      label: "Promotions",
-      link: "/app/salesorder/promotion",
-      icon: <LocalOfferOutlinedIcon fontSize="small" />,
-    },
-    {
-      id: 3,
-      label: "Sales Target",
-      link: "/app/salesorder/itemcategory",
-      icon: <TrendingUpOutlinedIcon fontSize="small" />,
-      children: [
-        {
-          label: "Item Categories",
-          link: "/app/salesorder/itemcategory",
-          icon: <SpellcheckOutlinedIcon fontSize="small" />,
-        },
-        {
-          label: "Company Users",
-          link: "/app/salesorder/companyusers",
-          icon: <StorageOutlinedIcon fontSize="small" />,
-        }
-      ]
-    },
+    // {
+    //   id: 2,
+    //   label: "Inventory",
+    //   link: "/app/salesorder/group",
+    //   icon: <BusinessOutlinedIcon fontSize="small" />,
+    //   children: [
+    //     {
+    //       label: "Category",
+    //       link: "/app/salesorder/group",
+    //       icon: <SpellcheckOutlinedIcon fontSize="small" />,
+    //     },
+    //     {
+    //       label: "Items Database",
+    //       link: "/app/salesorder/item",
+    //       icon: <StorageOutlinedIcon fontSize="small" />,
+    //     },
+    //   ]
+    // },
+    // {
+    //   id: 6,
+    //   label: "Promotions",
+    //   link: "/app/salesorder/promotion",
+    //   icon: <LocalOfferOutlinedIcon fontSize="small" />,
+    // },
+    // {
+    //   id: 3,
+    //   label: "Sales Target",
+    //   link: "/app/salesorder/itemcategory",
+    //   icon: <TrendingUpOutlinedIcon fontSize="small" />,
+    //   children: [
+    //     {
+    //       label: "Item Categories",
+    //       link: "/app/salesorder/itemcategory",
+    //       icon: <SpellcheckOutlinedIcon fontSize="small" />,
+    //     },
+    //     {
+    //       label: "Company Users",
+    //       link: "/app/salesorder/companyusers",
+    //       icon: <StorageOutlinedIcon fontSize="small" />,
+    //     }
+    //   ]
+    // },
     {
       id: 4,
       label: "Schedule",
@@ -241,11 +242,12 @@ const structure = localStorage.getItem('allow_so') != 0 ? [
           link: "/app/schedule_report",
           icon: <VisibilityOutlinedIcon fontSize="small" />,
         },
-        {
-          label: "Sales Order Report",
-          link: "/app/salesorder_report",
-          icon: <HistoryOutlinedIcon fontSize="small" />,
-        }]
+        // {
+        //   label: "Sales Order Report",
+        //   link: "/app/salesorder_report",
+        //   icon: <HistoryOutlinedIcon fontSize="small" />,
+        // }
+      ]
     },
 
   ];
